@@ -47,6 +47,8 @@ public class OembedResponse implements Serializable {
 
 	/** This one is not mapped to json and xml but set right after parsing. The source equals the provider name */
 	private String source;
+	/** This is the original url which got transformed */
+	private String originalUrl;
 	
 	private String type;
 	private String version;
@@ -78,6 +80,14 @@ public class OembedResponse implements Serializable {
 
 	public void setSource(String src) {
 		this.source = src;
+	}
+	
+	public String getOriginalUrl() {
+		return originalUrl;
+	}
+
+	public void setOriginalUrl(String originalUrl) {
+		this.originalUrl = originalUrl;
 	}
 
 	@XmlElement(name="type")

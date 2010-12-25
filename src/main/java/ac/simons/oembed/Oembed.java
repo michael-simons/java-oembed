@@ -136,16 +136,17 @@ public class Oembed {
 					logger.debug(String.format("Calling url %s", api.toString()));
 					final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(api));
 					if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-						throw new OembedException(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
-
-					response = this.getParser(provider.getFormat().toLowerCase()).unmarshal(httpResponse.getEntity().getContent());
-					response.setSource(provider.getName());
-					
-					if(this.memcachedClient != null) {
-						try {
-							this.memcachedClient.add(url, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
-						} catch(Exception e) {
-							logger.warn(String.format("Could not cache response for %s: %s", url, e.getMessage(), e));
+						logger.warn(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
+					else {
+						response = this.getParser(provider.getFormat().toLowerCase()).unmarshal(httpResponse.getEntity().getContent());
+						response.setSource(provider.getName());
+						response.setOriginalUrl(url);
+						if(this.memcachedClient != null) {
+							try {
+								this.memcachedClient.add(url, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
+							} catch(Exception e) {
+								logger.warn(String.format("Could not cache response for %s: %s", url, e.getMessage(), e));
+							}
 						}
 					}
 				} catch(IOException e) {
