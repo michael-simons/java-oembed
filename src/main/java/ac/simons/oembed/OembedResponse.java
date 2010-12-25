@@ -44,6 +44,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="oembed")
 public class OembedResponse implements Serializable {
 	private static final long serialVersionUID = -1965788850835022977L;
+
+	/** This one is not mapped to json and xml but set right after parsing. The source equals the provider name */
+	private String source;
 	
 	private String type;
 	private String version;
@@ -60,7 +63,23 @@ public class OembedResponse implements Serializable {
 	private String html;
 	private Integer width;
 	private Integer height;
-	
+
+	/**
+	 * @param possibleSource
+	 * @return True if this source is given and equals <code>possibleSource</code>
+	 */
+	public boolean from(String possibleSource) {
+		return this.getSource() != null && this.source.equals(possibleSource);
+	}
+		
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String src) {
+		this.source = src;
+	}
+
 	@XmlElement(name="type")
 	public String getType() {
 		return type;

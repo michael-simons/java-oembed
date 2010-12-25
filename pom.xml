@@ -82,6 +82,22 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<!-- http://code.google.com/p/xmemcached/ -->
+			<groupId>com.googlecode.xmemcached</groupId>
+			<artifactId>xmemcached</artifactId>
+			<version>1.2.6.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
