@@ -46,6 +46,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +61,9 @@ public class Oembed {
 	/** The HttpClient instance for all  requests. It should be configured for multithreading */
 	private final HttpClient httpClient;
 	/** The map of known providers */
-	private Map<String, OembedProvider> provider;
+	private Map<String, OembedProvider> provider = new HashMap<String, OembedProvider>();
+	/** Optional handlers for providers registered in {@link #provider} */
+	private Map<String, OembedResponseHandler> handler = new HashMap<String, OembedResponseHandler>();
 	/** The map of all known parsers. For now, only json and xml exists */
 	private Map<String, OembedParser> parser;
 	/** Optional memcached client for caching valid oembed responses */
@@ -92,6 +97,13 @@ public class Oembed {
 		if(this.getProvider() == null)
 			this.setProvider(new HashMap<String, OembedProvider>());
 		this.getProvider().put(provider.getName(), provider);
+		return this;
+	}
+	
+	public Oembed withHandler(final OembedResponseHandler handler) {
+		if(this.getHandler() == null)
+			this.setHandler(new HashMap<String, OembedResponseHandler>());
+		this.getHandler().put(handler.getFor(), handler);
 		return this;
 	}
 
@@ -161,6 +173,42 @@ public class Oembed {
 
 		return response;
 	}
+	
+	/**
+	 * Parses  the given html document into a document and processes 
+	 * all anchor elements. If a valid anchor is found, it tries to
+	 * get an oembed response for it's url and than render the result
+	 * into the document replacing the given anchor.<br>
+	 * It returns the html representation of the new document.<br>
+	 * If there's an error or no oembed result for an url, the anchor tag
+	 * will be left as it was. 
+	 * @param documentHtml
+	 * @return
+	 */
+	public String transformDocument(final String documentHtml) {
+		final Document document = Jsoup.parseBodyFragment(documentHtml, "");
+		for(Element a : document.getElementsByTag("a")) {
+			final String href = a.absUrl("href");
+		
+			try {
+				String renderedRespose = null;
+				final OembedResponse oembedResponse = this.transformUrl(href);
+				// There was no response or an exception happened
+				if(oembedResponse == null)
+					continue;				
+				// There is a handler for this response
+				else if(this.getHandler().containsKey(oembedResponse.getSource()))
+					this.getHandler().get(oembedResponse.getSource()).handle(document, a, oembedResponse);
+				// Try to render the response itself and replace the current anchor
+				else if((renderedRespose = oembedResponse.render()) != null) {
+					a.before(renderedRespose);
+					a.remove();
+				}
+			} catch (OembedException e) {
+			}
+		}
+		return document.body().html();
+	}
 
 	/**
 	 * Finds a provider for the given url
@@ -196,4 +244,12 @@ public class Oembed {
 	public void setDefaultCacheAge(int defaultCacheAge) {
 		this.defaultCacheAge = defaultCacheAge;
 	}
+
+	public Map<String, OembedResponseHandler> getHandler() {
+		return handler;
+	}
+
+	public void setHandler(Map<String, OembedResponseHandler> handler) {
+		this.handler = handler;
+	}	
 }
