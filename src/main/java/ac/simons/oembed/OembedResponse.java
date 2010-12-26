@@ -236,4 +236,40 @@ public class OembedResponse implements Serializable {
 				+ ", url=" + url + ", html=" + html + ", width=" + width
 				+ ", height=" + height + "]";
 	}
+	
+	/**
+	 * Renders a html representation of this oembed response
+	 * @return
+	 */
+	public String render() {
+		String rv = null;
+		if(this.getType().equalsIgnoreCase("photo"))
+			rv = this.renderPhoto();
+		else if(this.getType().equalsIgnoreCase("video"))
+			rv = this.renderVideo();
+		else if(this.getType().equalsIgnoreCase("link"))
+			rv = this.renderLink();
+		else if(this.getType().equalsIgnoreCase("rich"))
+			rv = this.renderRich();
+		return rv;
+	}
+	
+	private String renderVideo() {
+		return this.getHtml();
+	}
+	
+	private String renderPhoto() {
+		final String _title = this.getTitle() == null ? "" : this.getTitle();
+		return String.format("<img src=\"%s\" style=\"width:%dpx; height:%dpx;\" alt=\"%s\" title=\"%s\"/>", this.getUrl(), this.getWidth(), this.getHeight(), _title, _title);
+	}
+	
+	private String renderLink() {
+		final String _title = this.getTitle() == null ? this.getOriginalUrl() : this.getTitle();
+		final String _url = this.getUrl() == null ? this.getOriginalUrl() : this.getUrl();
+		return String.format("<a href=\"%s\">%s</a>", _url, _title);
+	}
+	
+	private String renderRich() {
+		return this.getHtml();
+	}
 }
