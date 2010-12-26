@@ -70,6 +70,8 @@ public class Oembed {
 	private MemcachedClient memcachedClient;
 	/** Time in seconds responses are cached. Used if the response has no cache_age */
 	private int defaultCacheAge = 3600;
+	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
+	private boolean autodiscovery = false;
 
 	/**
 	 * Constructs the Oembed Api with the default parsers (json and xml) and 
@@ -129,20 +131,22 @@ public class Oembed {
 	public OembedResponse transformUrl(final String url) throws OembedException {
 		OembedResponse response = null;
 
-		final OembedProvider provider = this.findProvider(url);
-		if(provider == null)
-			logger.info(String.format("No oembed provider for url %s", url));
-		else {
-			if(memcachedClient != null) {
-				try {
-					logger.debug("Trying to use memcached");					
-					response = memcachedClient.get(url);
-				} catch (Exception e) {
-					logger.warn(String.format("There was a problem with memcached: %s"), e.getMessage(), e);
-				}
+		if(memcachedClient != null) {
+			try {
+				logger.debug("Trying to use memcached");					
+				response = memcachedClient.get(url);
+			} catch (Exception e) {
+				logger.warn(String.format("There was a problem with memcached: %s"), e.getMessage(), e);
 			}
-
-			if(response == null) {
+		}
+		
+		if(response != null)
+			logger.debug("Using cached result...");
+		else {
+			OembedProvider provider = this.findProvider(url);
+			if(provider == null && (!this.isAutodiscovery() || (provider = autodiscoverOembedURIForUrl(url)) == null))
+				logger.info(String.format("No oembed provider for url %s and autodiscovery is disabled or found no result", url));
+			else {
 				try {
 					final URI api = provider.toApiUrl(url);
 					logger.debug(String.format("Calling url %s", api.toString()));
@@ -225,7 +229,32 @@ public class Oembed {
 						break providerLoop;
 					}	
 				}
+			}		
+		return rv;
+	}
+
+	private OembedProvider autodiscoverOembedURIForUrl(final String url) {
+		OembedProvider rv = null;
+		
+		try {
+			final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(url));
+			if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+				logger.warn(String.format("Autodiscovery for %s failed, server returned error %d: %s", url, httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
+			else {				
+				final Document document = Jsoup.parse(EntityUtils.toString(httpResponse.getEntity(), "UTF-8"));
+				for(Element alternate : document.getElementsByAttributeValue("rel", "alternate")) {					
+					if(alternate.attr("type").equalsIgnoreCase("application/json+oembed"))
+						rv = new AutodiscoveredOembedProvider(url, new URI(alternate.absUrl("href")), "json");
+					else if(alternate.attr("type").equalsIgnoreCase("text/xml+oembed"))
+						rv = new AutodiscoveredOembedProvider(url, new URI(alternate.absUrl("href")), "xml");
+					if(rv != null)
+						break;
+				}
 			}
+		} catch(Exception e) {
+			logger.warn(String.format("Autodiscovery for %s failedd: %s", url, e.getMessage()), e);
+		}
+		 
 		return rv;
 	}
 
@@ -251,5 +280,13 @@ public class Oembed {
 
 	public void setHandler(Map<String, OembedResponseHandler> handler) {
 		this.handler = handler;
+	}
+
+	public boolean isAutodiscovery() {
+		return autodiscovery;
+	}
+
+	public void setAutodiscovery(boolean autodiscovery) {
+		this.autodiscovery = autodiscovery;
 	}	
 }

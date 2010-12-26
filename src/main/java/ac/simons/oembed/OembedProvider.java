@@ -32,123 +32,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package ac.simons.oembed;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 
 /**
  * @author Michael J. Simons
  */
-public class OembedProvider {
-	private String name;
-	private String endpoint;
-	private String format;
-	private Integer maxWidth;
-	private Integer maxHeight;
-	private List<String> urlSchemes;
+public interface OembedProvider {
+	public String getName();
 	
-	public OembedProvider withName(final String name) {
-		this.setName(name);
-		return this;
-	}
+	public String getFormat();
 	
-	public OembedProvider withFormat(final String format) {
-		this.setFormat(format);
-		return this;
-	}
+	public List<String> getUrlSchemes();
 	
-	public OembedProvider withEndpoint(final String endpoint) {
-		this.setEndpoint(endpoint);
-		return this;
-	}
-	
-	public OembedProvider withUrlScheme(final String urlScheme) {
-		if(this.getUrlSchemes() == null)
-			this.setUrlSchemes(new ArrayList<String>());
-		this.getUrlSchemes().add(urlScheme);
-		return this;
-	}
-	
-	public OembedProvider withMaxHeight(final Integer maxHeight) {
-		this.setMaxHeight(maxHeight);
-		return this;
-	}
-	
-	public OembedProvider withMaxWidth(final Integer maxWidth) {
-		this.setMaxWidth(maxWidth);
-		return this;
-	}
-	
-	public URI toApiUrl(final String url) throws URISyntaxException {
-		String uri = null;
-		final List<NameValuePair> query = new ArrayList<NameValuePair>();
-
-		if(this.getEndpoint().toLowerCase().contains("%{format}"))
-			uri = this.getEndpoint().replaceAll(Pattern.quote("%{format}"), this.getFormat());
-		else {
-			uri = this.getEndpoint();
-			query.add(new BasicNameValuePair("format", this.getFormat()));
-		}
-		query.add(new BasicNameValuePair("url", url));
-		if(this.getMaxWidth() != null)
-			query.add(new BasicNameValuePair("maxwidth", this.getMaxWidth().toString()));
-		if(this.getMaxHeight() != null)
-			query.add(new BasicNameValuePair("maxheight", this.getMaxHeight().toString()));
-		return new URI(String.format("%s?%s", uri, URLEncodedUtils.format(query, "UTF-8")));
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getEndpoint() {
-		return endpoint;
-	}
-	
-	public void setEndpoint(String apiEndpoint) {
-		this.endpoint = apiEndpoint;
-	}
-	
-	public List<String> getUrlSchemes() {
-		return urlSchemes;
-	}
-	
-	public void setUrlSchemes(List<String> urlSchemes) {
-		this.urlSchemes = urlSchemes;
-	}
-
-	public String getFormat() {
-		return format;
-	}
-
-	public void setFormat(String format) {
-		this.format = format;
-	}
-
-	public Integer getMaxWidth() {
-		return maxWidth;
-	}
-
-	public void setMaxWidth(Integer maxWidth) {
-		this.maxWidth = maxWidth;
-	}
-
-	public Integer getMaxHeight() {
-		return maxHeight;
-	}
-
-	public void setMaxHeight(Integer maxHeight) {
-		this.maxHeight = maxHeight;
-	}
+	public URI toApiUrl(final String url) throws URISyntaxException;
 }

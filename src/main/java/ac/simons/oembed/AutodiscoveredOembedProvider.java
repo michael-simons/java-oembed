@@ -31,56 +31,47 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package ac.simons.tests.oembed;
+package ac.simons.oembed;
 
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.Test;
-
-import ac.simons.oembed.DefaultOembedProvider;
-import ac.simons.oembed.Oembed;
-import ac.simons.oembed.OembedException;
-import ac.simons.oembed.OembedResponse;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Not a real test but a simple demonstration how to use oembed
  * @author Michael J. Simons
- *
  */
-public class Howto {
-	@Test
-	public void youtubeJson() throws OembedException {
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
-		oembed.withProvider(
-				new DefaultOembedProvider()
-					.withName("youtube")
-					.withFormat("json")
-					.withMaxWidth(480)
-					.withEndpoint("http://www.youtube.com/oembed")
-					.withUrlScheme("http://(www|de)\\.youtube\\.com/watch\\?v=.*")
-				);
-		OembedResponse response = oembed.transformUrl("http://www.youtube.com/watch?v=lh_em3-ndVw");
-		System.out.println(response);
+public class AutodiscoveredOembedProvider implements OembedProvider {
+	/** The autodiscovered provider supports only one scheme... */
+	private List<String> urlSchemes = new ArrayList<String>();
+	private final URI apiUrl;
+	private final String name;
+	private String format;
+	
+	public AutodiscoveredOembedProvider(final String originalUrl, final URI apiUrl, final String format) {
+		this.urlSchemes.add(originalUrl);
+		this.apiUrl = apiUrl;
+		this.name = this.apiUrl.getHost();
+		this.format = format;
 	}
 	
-	@Test
-	public void flickrXml() throws OembedException {
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
-		oembed.withProvider(
-				new DefaultOembedProvider()
-					.withName("flickr")
-					.withFormat("xml")
-					.withEndpoint("http://www.flickr.com/services/oembed")
-					.withUrlScheme("http://www\\.flickr\\.(com|de)/photos/.*")
-				);
-		OembedResponse response = oembed.transformUrl("http://www.flickr.com/photos/caitysparkles/5263331070/");
-		System.out.println(response);
+	@Override
+	public String getName() {
+		return this.name;
 	}
-	
-	@Test
-	public void dailyfratze() throws OembedException {
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
-		oembed.setAutodiscovery(true);
-		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/22");
-		System.out.println(response);
+
+	@Override
+	public String getFormat() {
+		return this.format;
+	}
+
+	@Override
+	public List<String> getUrlSchemes() {
+		return this.urlSchemes;
+	}
+
+	@Override
+	public URI toApiUrl(String url) throws URISyntaxException {
+		return this.apiUrl;
 	}
 }
