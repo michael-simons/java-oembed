@@ -130,47 +130,50 @@ public class Oembed {
 	 */
 	public OembedResponse transformUrl(final String url) throws OembedException {
 		OembedResponse response = null;
-
-		if(memcachedClient != null) {
-			try {
-				logger.debug("Trying to use memcached");					
-				response = memcachedClient.get(url);
-			} catch (Exception e) {
-				logger.warn(String.format("There was a problem with memcached: %s"), e.getMessage(), e);
-			}
-		}
-		
-		if(response != null)
-			logger.debug("Using cached result...");
-		else {
-			OembedProvider provider = this.findProvider(url);
-			if(provider == null && (!this.isAutodiscovery() || (provider = autodiscoverOembedURIForUrl(url)) == null))
-				logger.info(String.format("No oembed provider for url %s and autodiscovery is disabled or found no result", url));
-			else {
+		if(url == null || url.length() == 0) {
+			logger.warn("Can't embed an empty url!");
+		} else {
+			if(memcachedClient != null) {
 				try {
-					final URI api = provider.toApiUrl(url);
-					logger.debug(String.format("Calling url %s", api.toString()));
-					final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(api));
-					if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
-						logger.warn(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
-					else {
-						response = this.getParser(provider.getFormat().toLowerCase()).unmarshal(httpResponse.getEntity().getContent());
-						response.setSource(provider.getName());
-						response.setOriginalUrl(url);
-						if(this.memcachedClient != null) {
-							try {
-								this.memcachedClient.add(url, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
-							} catch(Exception e) {
-								logger.warn(String.format("Could not cache response for %s: %s", url, e.getMessage(), e));
+					logger.debug("Trying to use memcached");					
+					response = memcachedClient.get(url);
+				} catch (Exception e) {
+					logger.warn(String.format("There was a problem with memcached: %s", e.getMessage()), e);
+				}
+			}
+
+			if(response != null)
+				logger.debug("Using cached result...");
+			else {
+				OembedProvider provider = this.findProvider(url);
+				if(provider == null && (!this.isAutodiscovery() || (provider = autodiscoverOembedURIForUrl(url)) == null))
+					logger.info(String.format("No oembed provider for url %s and autodiscovery is disabled or found no result", url));
+				else {
+					try {
+						final URI api = provider.toApiUrl(url);
+						logger.debug(String.format("Calling url %s", api.toString()));
+						final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(api));
+						if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+							logger.warn(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
+						else {
+							response = this.getParser(provider.getFormat().toLowerCase()).unmarshal(httpResponse.getEntity().getContent());
+							response.setSource(provider.getName());
+							response.setOriginalUrl(url);
+							if(this.memcachedClient != null) {
+								try {
+									this.memcachedClient.add(url, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
+								} catch(Exception e) {
+									logger.warn(String.format("Could not cache response for %s: %s", url, e.getMessage(), e));
+								}
 							}
 						}
+					} catch(IOException e) {
+						throw new OembedException(e);
+					} catch(NullPointerException e) {
+						throw new OembedException(String.format("NPE, probably invalid format :%s", provider.getFormat()));
+					} catch (URISyntaxException e) {
+						throw new OembedException(e);
 					}
-				} catch(IOException e) {
-					throw new OembedException(e);
-				} catch(NullPointerException e) {
-					throw new OembedException(String.format("NPE, probably invalid format :%s", provider.getFormat()));
-				} catch (URISyntaxException e) {
-					throw new OembedException(e);
 				}
 			}
 		}
@@ -192,8 +195,7 @@ public class Oembed {
 	public String transformDocument(final String documentHtml) {
 		final Document document = Jsoup.parseBodyFragment(documentHtml, "");
 		for(Element a : document.getElementsByTag("a")) {
-			final String href = a.absUrl("href");
-		
+			final String href = a.absUrl("href");			
 			try {
 				String renderedRespose = null;
 				final OembedResponse oembedResponse = this.transformUrl(href);
