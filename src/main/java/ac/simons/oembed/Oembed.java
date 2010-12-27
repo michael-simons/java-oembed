@@ -72,6 +72,7 @@ public class Oembed {
 	private int defaultCacheAge = 3600;
 	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
 	private boolean autodiscovery = false;
+	private String baseUri = "";
 
 	/**
 	 * Constructs the Oembed Api with the default parsers (json and xml) and 
@@ -193,7 +194,7 @@ public class Oembed {
 	 * @return
 	 */
 	public String transformDocument(final String documentHtml) {
-		final Document document = Jsoup.parseBodyFragment(documentHtml, "");
+		final Document document = Jsoup.parseBodyFragment(documentHtml, baseUri);
 		for(Element a : document.getElementsByTag("a")) {
 			final String href = a.absUrl("href");			
 			try {
@@ -290,5 +291,13 @@ public class Oembed {
 
 	public void setAutodiscovery(boolean autodiscovery) {
 		this.autodiscovery = autodiscovery;
+	}
+
+	public String getBaseUri() {
+		return baseUri;
+	}
+
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri;
 	}	
 }
