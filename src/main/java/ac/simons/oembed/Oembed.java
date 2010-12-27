@@ -73,6 +73,7 @@ public class Oembed {
 	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
 	private boolean autodiscovery = false;
 	private String baseUri = "";
+	private String memcachedNamespace;
 
 	/**
 	 * Constructs the Oembed Api with the default parsers (json and xml) and 
@@ -122,6 +123,10 @@ public class Oembed {
 		return this.parser.get(format);
 	}
 
+	private String makeKey(final String key) {
+		return memcachedNamespace == null || memcachedNamespace.length() == 0 ? key : String.format("%s:%s", memcachedNamespace, key);
+	}
+	
 	/**
 	 * Transforms the given URL into an OembedResponse. Returns null if
 	 * there is no provider configured for this url.
@@ -137,7 +142,7 @@ public class Oembed {
 			if(memcachedClient != null) {
 				try {
 					logger.debug("Trying to use memcached");					
-					response = memcachedClient.get(url);
+					response = memcachedClient.get(makeKey(url));
 				} catch (Exception e) {
 					logger.warn(String.format("There was a problem with memcached: %s", e.getMessage()), e);
 				}
@@ -162,7 +167,7 @@ public class Oembed {
 							response.setOriginalUrl(url);
 							if(this.memcachedClient != null) {
 								try {
-									this.memcachedClient.add(url, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
+									this.memcachedClient.add(makeKey(url), response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
 								} catch(Exception e) {
 									logger.warn(String.format("Could not cache response for %s: %s", url, e.getMessage(), e));
 								}
@@ -285,6 +290,14 @@ public class Oembed {
 		this.handler = handler;
 	}
 
+	public Map<String, OembedParser> getParser() {
+		return parser;
+	}
+
+	public void setParser(Map<String, OembedParser> parser) {
+		this.parser = parser;
+	}
+
 	public boolean isAutodiscovery() {
 		return autodiscovery;
 	}
@@ -299,5 +312,13 @@ public class Oembed {
 
 	public void setBaseUri(String baseUri) {
 		this.baseUri = baseUri;
-	}	
+	}
+
+	public String getMemcachedNamespace() {
+		return memcachedNamespace;
+	}
+
+	public void setMemcachedNamespace(String memcachedNamespace) {
+		this.memcachedNamespace = memcachedNamespace;
+	}		
 }
