@@ -49,6 +49,7 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,6 +188,16 @@ public class Oembed {
 		return response;
 	}
 	
+	public String transformDocumentString(final String documentHtml) {
+		final Document rv = transformDocument(documentHtml);
+		rv.outputSettings().prettyPrint(false).escapeMode(EscapeMode.xhtml);
+		return rv.body().html();
+	}
+	
+	public Document transformDocument(final String documentHtml) {
+		return transformDocument(Jsoup.parseBodyFragment(documentHtml, baseUri));		
+	}
+	
 	/**
 	 * Parses  the given html document into a document and processes 
 	 * all anchor elements. If a valid anchor is found, it tries to
@@ -198,8 +209,12 @@ public class Oembed {
 	 * @param documentHtml
 	 * @return
 	 */
-	public String transformDocument(final String documentHtml) {
-		final Document document = Jsoup.parseBodyFragment(documentHtml, baseUri);
+	public Document transformDocument(final Document document) {
+		boolean changedBaseUri = false;
+		if(document.baseUri() == null && this.getBaseUri() != null) {
+			document.setBaseUri(this.getBaseUri());
+			changedBaseUri = true;
+		}
 		for(Element a : document.getElementsByTag("a")) {
 			final String href = a.absUrl("href");			
 			try {
@@ -219,7 +234,9 @@ public class Oembed {
 			} catch (OembedException e) {
 			}
 		}
-		return document.body().html();
+		if(changedBaseUri)
+			document.setBaseUri(null);
+		return document;
 	}
 
 	/**
