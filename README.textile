@@ -6,7 +6,7 @@ It uses "Jackson":http://jackson.codehaus.org/ for JSON processing and JAXB for 
 
 The project is a ready to use configured maven/eclipse project. 
 
-java-oembed supports caching through "xmemcached":http://code.google.com/p/xmemcached/ if a memcached instance is available.
+java-oembed can be configured to use an "ehcache CacheManager instance":http://ehcache.org/.
 
 h2. Usage
 
@@ -17,7 +17,7 @@ The the httpClient reference must an instance of org.apache.http.client.HttpClie
 <pre><code>
 <bean name="oembed" class="ac.simons.oembed.Oembed">
   <constructor-arg name="httpClient" ref="httpClient" />
-  <property name="memcachedClient" ref="memcachedClient" />
+  <property name="cacheManager" ref="cacheManager" />
   <property name="provider">
     <map>
       <entry key="youtube">

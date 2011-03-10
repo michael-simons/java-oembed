@@ -33,6 +33,8 @@
  */
 package ac.simons.tests.oembed;
 
+import net.sf.ehcache.CacheManager;
+
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
 
@@ -82,5 +84,19 @@ public class Howto {
 		oembed.setAutodiscovery(true);
 		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/22");
 		System.out.println(response);
+	}
+	
+	@Test
+	public void dailyfratzeThroughCache() throws OembedException {
+		final CacheManager cacheManager = CacheManager.create();		
+		final Oembed oembed = new Oembed(new DefaultHttpClient());
+		oembed.setCacheManager(cacheManager);
+		
+		oembed.setAutodiscovery(true);
+		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
+		System.out.println(response);
+		
+		response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
+		System.out.println(response);		
 	}
 }

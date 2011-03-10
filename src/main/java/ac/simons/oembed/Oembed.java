@@ -39,7 +39,8 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.rubyeye.xmemcached.MemcachedClient;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -68,13 +69,14 @@ public class Oembed {
 	/** The map of all known parsers. For now, only json and xml exists */
 	private Map<String, OembedParser> parser;
 	/** Optional memcached client for caching valid oembed responses */
-	private MemcachedClient memcachedClient;
+	private CacheManager cacheManager;
 	/** Time in seconds responses are cached. Used if the response has no cache_age */
 	private int defaultCacheAge = 3600;
 	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
 	private boolean autodiscovery = false;
 	private String baseUri = "";
-	private String memcachedNamespace;
+	/** Name of the ehcache, defaults to the fully qualified name of Oembed */
+	private String cacheName = Oembed.class.getName();
 
 	/**
 	 * Constructs the Oembed Api with the default parsers (json and xml) and 
@@ -124,10 +126,6 @@ public class Oembed {
 		return this.parser.get(format);
 	}
 
-	private String makeKey(final String key) {
-		return memcachedNamespace == null || memcachedNamespace.length() == 0 ? key : String.format("%s:%s", memcachedNamespace, key);
-	}
-	
 	/**
 	 * Transforms the given URL into an OembedResponse. Returns null if
 	 * there is no provider configured for this url.
@@ -140,10 +138,10 @@ public class Oembed {
 		if(url == null || url.length() == 0) {
 			logger.warn("Can't embed an empty url!");
 		} else {
-			if(memcachedClient != null) {
+			if(cacheManager != null) {
 				try {
 					logger.debug("Trying to use memcached");					
-					response = memcachedClient.get(makeKey(url));
+					response = getFromCache(url);					
 				} catch (Exception e) {
 					logger.warn(String.format("There was a problem with memcached: %s", e.getMessage()), e);
 				}
@@ -166,9 +164,9 @@ public class Oembed {
 							response = this.getParser(provider.getFormat().toLowerCase()).unmarshal(httpResponse.getEntity().getContent());
 							response.setSource(provider.getName());
 							response.setOriginalUrl(url);
-							if(this.memcachedClient != null) {
+							if(this.cacheManager != null) {
 								try {
-									this.memcachedClient.add(makeKey(url), response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge(), response);
+									this.addToCache(url, response);
 								} catch(Exception e) {
 									logger.warn(String.format("Could not cache response for %s: %s", url, e.getMessage(), e));
 								}
@@ -283,12 +281,12 @@ public class Oembed {
 		return rv;
 	}
 
-	public MemcachedClient getMemcachedClient() {
-		return memcachedClient;
+	public CacheManager getCacheManager() {
+		return cacheManager;
 	}
 
-	public void setMemcachedClient(MemcachedClient memcachedClient) {
-		this.memcachedClient = memcachedClient;
+	public void setCacheManager(CacheManager cacheManager) {
+		this.cacheManager = cacheManager;
 	}
 
 	public int getDefaultCacheAge() {
@@ -331,11 +329,29 @@ public class Oembed {
 		this.baseUri = baseUri;
 	}
 
-	public String getMemcachedNamespace() {
-		return memcachedNamespace;
+	public String getCacheName() {
+		return cacheName;
 	}
 
-	public void setMemcachedNamespace(String memcachedNamespace) {
-		this.memcachedNamespace = memcachedNamespace;
+	public void setCacheName(String memcachedNamespace) {
+		this.cacheName = memcachedNamespace;
 	}		
+	
+	protected OembedResponse getFromCache(final String key) {
+		Ehcache cache = this.cacheManager.getCache(this.cacheName);
+		if(cache == null) {
+			this.cacheManager.addCache(this.cacheName);
+			cache = this.cacheManager.getCache(this.cacheName);
+		}
+		OembedResponse rv = null;
+		final net.sf.ehcache.Element element = cache.get(key);
+		if(element != null)
+			rv = (OembedResponse) element.getValue();
+		return rv;
+	}	
+	
+	protected void addToCache(final String url, final OembedResponse response) {
+		final Ehcache cache = this.cacheManager.getCache(this.cacheName);		
+		cache.put(new net.sf.ehcache.Element(url, response, null, null, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge()));
+	}
 }

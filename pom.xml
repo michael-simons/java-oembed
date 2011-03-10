@@ -37,7 +37,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.michael-simons</groupId>
 	<artifactId>java-oembed</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>java-oembed</name>
 	<description>Simple Oembed Client for Java EE</description>
 	<build>
@@ -82,10 +82,9 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<!-- http://code.google.com/p/xmemcached/ -->
-			<groupId>com.googlecode.xmemcached</groupId>
-			<artifactId>xmemcached</artifactId>
-			<version>1.2.6.2</version>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.4.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -130,7 +129,7 @@
 			<artifactId>jackson-xc</artifactId>
 			<version>1.6.4</version>
 		</dependency>
-		<dependency>			
+		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.4.1</version>
