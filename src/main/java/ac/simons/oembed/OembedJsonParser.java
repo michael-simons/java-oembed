@@ -34,6 +34,7 @@
 package ac.simons.oembed;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -55,7 +56,7 @@ public class OembedJsonParser implements OembedParser {
 	
 	@Override
 	public OembedResponse unmarshal(InputStream httpResponse) throws OembedException {
-		try {
+		try {			
 			return objectMapper.readValue(httpResponse, OembedResponse.class);
 		} catch(Exception e) {
 			throw new OembedException(e);
@@ -66,6 +67,15 @@ public class OembedJsonParser implements OembedParser {
 	public String marshal(OembedResponse oembedResponse) throws OembedException {
 		try {
 			return objectMapper.writeValueAsString(oembedResponse);
+		} catch (Exception e) {
+			throw new OembedException(e);
+		}
+	}
+
+	@Override
+	public void marshal(OembedResponse oembedResponse, OutputStream outputStream) throws OembedException {
+		try {
+			this.objectMapper.writeValue(outputStream, oembedResponse);
 		} catch (Exception e) {
 			throw new OembedException(e);
 		}

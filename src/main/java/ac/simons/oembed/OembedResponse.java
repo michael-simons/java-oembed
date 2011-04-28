@@ -35,35 +35,59 @@ package ac.simons.oembed;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 /**
  * @author Michael J. Simons
  */
 @XmlRootElement(name="oembed")
+@XmlAccessorType(XmlAccessType.FIELD)
+@JsonSerialize(include=Inclusion.NON_NULL)
 public class OembedResponse implements Serializable {
 	private static final long serialVersionUID = -1965788850835022977L;
 
-	/** This one is not mapped to json and xml but set right after parsing. The source equals the provider name */
+	/** This one is not mapped to json and xml but set right after parsing. The source equals the provider name */	
+	@javax.xml.bind.annotation.XmlTransient
 	private String source;
 	/** This is the original url which got transformed */
+	@javax.xml.bind.annotation.XmlTransient
 	private String originalUrl;
 	
+	@XmlElement(name="type")
 	private String type;
+	@XmlElement(name="version")
 	private String version;
+	@XmlElement(name="title")
 	private String title;
+	@XmlElement(name="author_name")
 	private String authorName;
+	@XmlElement(name="author_url")
 	private String authorUrl;
+	@XmlElement(name="provider_name")
 	private String providerName;
+	@XmlElement(name="provider_url")
 	private String providerUrl;
+	@XmlElement(name="cache_age")
 	private Integer cacheAge;
+	@XmlElement(name="thumbnail_url")
 	private String thumbnailUrl;
+	@XmlElement(name="thumbnail_width")
 	private Integer thumbnailWidth;
+	@XmlElement(name="thumbnail_height")
 	private Integer thumbnailHeight;
+	@XmlElement(name="url")
 	private String url;
+	@XmlElement(name="html")
 	private String html;
+	@XmlElement(name="width")
 	private Integer width;
+	@XmlElement(name="height")
 	private Integer height;
 
 	/**
@@ -89,8 +113,7 @@ public class OembedResponse implements Serializable {
 	public void setOriginalUrl(String originalUrl) {
 		this.originalUrl = originalUrl;
 	}
-
-	@XmlElement(name="type")
+	
 	public String getType() {
 		return type;
 	}
@@ -98,8 +121,7 @@ public class OembedResponse implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	@XmlElement(name="version")
+		
 	public String getVersion() {
 		return version;
 	}
@@ -107,8 +129,7 @@ public class OembedResponse implements Serializable {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
-	@XmlElement(name="title")
+		
 	public String getTitle() {
 		return title;
 	}
@@ -116,8 +137,7 @@ public class OembedResponse implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
-	@XmlElement(name="author_name")
+		
 	public String getAuthorName() {
 		return authorName;
 	}
@@ -126,7 +146,6 @@ public class OembedResponse implements Serializable {
 		this.authorName = authorName;
 	}
 	
-	@XmlElement(name="author_url")
 	public String getAuthorUrl() {
 		return authorUrl;
 	}
@@ -135,7 +154,6 @@ public class OembedResponse implements Serializable {
 		this.authorUrl = authorUrl;
 	}
 	
-	@XmlElement(name="provider_name")
 	public String getProviderName() {
 		return providerName;
 	}
@@ -143,8 +161,7 @@ public class OembedResponse implements Serializable {
 	public void setProviderName(String providerName) {
 		this.providerName = providerName;
 	}
-	
-	@XmlElement(name="provider_url")
+		
 	public String getProviderUrl() {
 		return providerUrl;
 	}
@@ -152,8 +169,7 @@ public class OembedResponse implements Serializable {
 	public void setProviderUrl(String providerUrl) {
 		this.providerUrl = providerUrl;
 	}
-	
-	@XmlElement(name="cache_age")
+		
 	public Integer getCacheAge() {
 		return cacheAge;
 	}
@@ -161,8 +177,7 @@ public class OembedResponse implements Serializable {
 	public void setCacheAge(Integer cacheAge) {
 		this.cacheAge = cacheAge;
 	}
-	
-	@XmlElement(name="thumbnail_url")
+		
 	public String getThumbnailUrl() {
 		return thumbnailUrl;
 	}
@@ -170,8 +185,7 @@ public class OembedResponse implements Serializable {
 	public void setThumbnailUrl(String thumbnailUrl) {
 		this.thumbnailUrl = thumbnailUrl;
 	}
-	
-	@XmlElement(name="thumbnail_width")
+		
 	public Integer getThumbnailWidth() {
 		return thumbnailWidth;
 	}
@@ -179,8 +193,7 @@ public class OembedResponse implements Serializable {
 	public void setThumbnailWidth(Integer thumbnailWidth) {
 		this.thumbnailWidth = thumbnailWidth;
 	}
-	
-	@XmlElement(name="thumbnail_height")
+		
 	public Integer getThumbnailHeight() {
 		return thumbnailHeight;
 	}
@@ -188,8 +201,7 @@ public class OembedResponse implements Serializable {
 	public void setThumbnailHeight(Integer thumbnailHeight) {
 		this.thumbnailHeight = thumbnailHeight;
 	}
-
-	@XmlElement(name="url")
+	
 	public String getUrl() {
 		return url;
 	}
@@ -197,8 +209,7 @@ public class OembedResponse implements Serializable {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-
-	@XmlElement(name="html")
+	
 	public String getHtml() {
 		return html;
 	}
@@ -206,8 +217,7 @@ public class OembedResponse implements Serializable {
 	public void setHtml(String html) {
 		this.html = html;
 	}
-
-	@XmlElement(name="width")
+	
 	public Integer getWidth() {
 		return width;
 	}
@@ -215,8 +225,7 @@ public class OembedResponse implements Serializable {
 	public void setWidth(Integer width) {
 		this.width = width;
 	}
-
-	@XmlElement(name="height")
+	
 	public Integer getHeight() {
 		return height;
 	}

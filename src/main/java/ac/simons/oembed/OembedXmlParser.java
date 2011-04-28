@@ -34,6 +34,7 @@
 package ac.simons.oembed;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
@@ -72,6 +73,15 @@ public class OembedXmlParser implements OembedParser {
 			out.flush();
 			out.close();
 			return out.toString();
+		} catch (Exception e) {
+			throw new OembedException(e);
+		}
+	}
+
+	@Override
+	public void marshal(OembedResponse oembedResponse, OutputStream outputStream) throws OembedException {
+		try {
+			jaxbContext.createMarshaller().marshal(oembedResponse, outputStream);
 		} catch (Exception e) {
 			throw new OembedException(e);
 		}

@@ -41,6 +41,7 @@ import org.junit.Test;
 import ac.simons.oembed.DefaultOembedProvider;
 import ac.simons.oembed.Oembed;
 import ac.simons.oembed.OembedException;
+import ac.simons.oembed.OembedJsonParser;
 import ac.simons.oembed.OembedResponse;
 
 /**
@@ -98,5 +99,15 @@ public class Howto {
 		
 		response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
 		System.out.println(response);		
+	}
+	
+	@Test
+	public void jsonMarshall() throws OembedException {
+		OembedResponse oembedResponse = new OembedResponse();
+		oembedResponse.setHtml("<div>foobar</div>");
+		oembedResponse.setSource("Should be ignored");
+		oembedResponse.setAuthorName("Michael Simons");		
+		OembedJsonParser p = new OembedJsonParser();
+		System.out.println(p.marshal(oembedResponse));
 	}
 }

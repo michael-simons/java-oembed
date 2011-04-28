@@ -34,6 +34,7 @@
 package ac.simons.oembed;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Michael J. Simons
@@ -54,4 +55,6 @@ public interface OembedParser {
 	 * @throws OembedException
 	 */
 	public String marshal(final OembedResponse oembedResponse) throws OembedException;
+	
+	public void marshal(final OembedResponse oembedResponse, final OutputStream outputStream) throws OembedException;
 }
