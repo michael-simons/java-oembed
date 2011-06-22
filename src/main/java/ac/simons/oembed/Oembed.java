@@ -68,7 +68,7 @@ public class Oembed {
 	private Map<String, OembedResponseHandler> handler = new HashMap<String, OembedResponseHandler>();
 	/** The map of all known parsers. For now, only json and xml exists */
 	private Map<String, OembedParser> parser;
-	/** Optional memcached client for caching valid oembed responses */
+	/** Optional ehcache client for caching valid oembed responses */
 	private CacheManager cacheManager;
 	/** Time in seconds responses are cached. Used if the response has no cache_age */
 	private int defaultCacheAge = 3600;
@@ -140,10 +140,10 @@ public class Oembed {
 		} else {
 			if(cacheManager != null) {
 				try {
-					logger.debug("Trying to use memcached");					
+					logger.debug("Trying to use ehcache");					
 					response = getFromCache(url);					
 				} catch (Exception e) {
-					logger.warn(String.format("There was a problem with memcached: %s", e.getMessage()), e);
+					logger.warn(String.format("There was a problem with ehcache: %s", e.getMessage()), e);
 				}
 			}
 
@@ -333,8 +333,8 @@ public class Oembed {
 		return cacheName;
 	}
 
-	public void setCacheName(String memcachedNamespace) {
-		this.cacheName = memcachedNamespace;
+	public void setCacheName(String cacheName) {
+		this.cacheName = cacheName;
 	}		
 	
 	protected OembedResponse getFromCache(final String key) {
