@@ -260,11 +260,13 @@ public class Oembed {
 		OembedProvider rv = null;
 		
 		try {
-			final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(url));
+			final HttpGet request = new HttpGet(url);
+			final HttpResponse httpResponse = this.httpClient.execute(request);
 			if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
 				logger.warn(String.format("Autodiscovery for %s failed, server returned error %d: %s", url, httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
 			else {				
-				final Document document = Jsoup.parse(EntityUtils.toString(httpResponse.getEntity(), "UTF-8"));
+				final URI uri = request.getURI();
+				final Document document = Jsoup.parse(EntityUtils.toString(httpResponse.getEntity(), "UTF-8"), String.format("%s://%s:%d", uri.getScheme(), uri.getHost(), uri.getPort()));				
 				for(Element alternate : document.getElementsByAttributeValue("rel", "alternate")) {					
 					if(alternate.attr("type").equalsIgnoreCase("application/json+oembed"))
 						rv = new AutodiscoveredOembedProvider(url, new URI(alternate.absUrl("href")), "json");
