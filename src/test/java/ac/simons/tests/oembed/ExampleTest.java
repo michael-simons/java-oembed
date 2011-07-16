@@ -49,7 +49,7 @@ import ac.simons.oembed.OembedResponse;
  * @author Michael J. Simons
  *
  */
-public class Howto {
+public class ExampleTest {
 	@Test
 	public void youtubeJson() throws OembedException {
 		final Oembed oembed = new Oembed(new DefaultHttpClient());
