@@ -36,6 +36,7 @@ package ac.simons.tests.oembed;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.Assert;
 import org.junit.Test;
 
 import ac.simons.oembed.DefaultOembedProvider;
@@ -92,13 +93,28 @@ public class ExampleTest {
 		final CacheManager cacheManager = CacheManager.create();		
 		final Oembed oembed = new Oembed(new DefaultHttpClient());
 		oembed.setCacheManager(cacheManager);
-		
 		oembed.setAutodiscovery(true);
+		
 		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
 		System.out.println(response);
 		
 		response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
 		System.out.println(response);		
+		
+		oembed.withProvider(
+				new DefaultOembedProvider()
+					.withName("flickr")
+					.withFormat("xml")
+					.withEndpoint("http://www.flickr.com/services/oembed")
+					.withUrlScheme("http://www\\.flickr\\.(com|de)/photos/.*")
+				);
+				
+		// 404 etc. is not called twice		
+		response = oembed.transformUrl("http://www.flickr.com/photos/idontexists/123456/");
+		Assert.assertNull(response);
+		
+		response = oembed.transformUrl("http://www.flickr.com/photos/idontexists/123456/");		
+		Assert.assertNull(response);
 	}
 	
 	@Test

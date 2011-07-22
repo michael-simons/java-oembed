@@ -58,6 +58,8 @@ public class OembedResponse implements Serializable {
 	/** This is the original url which got transformed */
 	@javax.xml.bind.annotation.XmlTransient
 	private String originalUrl;
+	@javax.xml.bind.annotation.XmlTransient
+	private boolean empty = false;
 	
 	@XmlElement(name="type")
 	private String type;
@@ -281,4 +283,12 @@ public class OembedResponse implements Serializable {
 	private String renderRich() {
 		return this.getHtml();
 	}
+
+	public boolean isEmpty() {
+		return empty;
+	}
+
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
+	}	
 }

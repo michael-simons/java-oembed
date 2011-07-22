@@ -74,6 +74,8 @@ public class Oembed {
 	private int defaultCacheAge = 3600;
 	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
 	private boolean autodiscovery = false;
+	/** If this is set to true and <tt>cacheManager</tt> is not null, failed urls aren't called for the <tt>defaultCacheAge</tt> seconds */
+	private boolean ignoreFailedUrls = true;
 	private String baseUri = "";
 	/** Name of the ehcache, defaults to the fully qualified name of Oembed */
 	private String cacheName = Oembed.class.getName();
@@ -147,9 +149,11 @@ public class Oembed {
 				}
 			}
 
-			if(response != null)
+			if(response != null) {
 				logger.debug("Using cached result...");
-			else {
+				if(response.isEmpty())
+					response = null;
+			} else {
 				OembedProvider provider = this.findProvider(url);
 				if(provider == null && (!this.isAutodiscovery() || (provider = autodiscoverOembedURIForUrl(url)) == null))
 					logger.info(String.format("No oembed provider for url %s and autodiscovery is disabled or found no result", url));
@@ -158,9 +162,14 @@ public class Oembed {
 						final URI api = provider.toApiUrl(url);
 						logger.debug(String.format("Calling url %s", api.toString()));
 						final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(api));
-						if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+						if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 							logger.warn(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
-						else {
+							if(ignoreFailedUrls && cacheManager != null) {
+								OembedResponse emptyResponse = new OembedResponse();
+								emptyResponse.setEmpty(true);
+								this.addToCache(url, emptyResponse);
+							}								
+						} else {
 							response = this.getParser(provider.getFormat().toLowerCase()).unmarshal(httpResponse.getEntity().getContent());
 							response.setSource(provider.getName());
 							response.setOriginalUrl(url);
@@ -356,4 +365,12 @@ public class Oembed {
 		final Ehcache cache = this.cacheManager.getCache(this.cacheName);		
 		cache.put(new net.sf.ehcache.Element(url, response, null, null, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge()));
 	}
+
+	public boolean isIgnoreFailedUrls() {
+		return ignoreFailedUrls;
+	}
+
+	public void setIgnoreFailedUrls(boolean ignoreFailedUrls) {
+		this.ignoreFailedUrls = ignoreFailedUrls;
+	}	
 }
