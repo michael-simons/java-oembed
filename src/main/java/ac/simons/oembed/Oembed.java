@@ -74,11 +74,15 @@ public class Oembed {
 	private int defaultCacheAge = 3600;
 	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
 	private boolean autodiscovery = false;
-	/** If this is set to true and <tt>cacheManager</tt> is not null, failed urls aren't called for the <tt>defaultCacheAge</tt> seconds */
-	private boolean ignoreFailedUrls = true;
+	/** If this is not null and <tt>cacheManager</tt> is not null, failed urls aren't called for the given amount of seconds */
+	private Integer ignoreFailedUrlsForSeconds = 24 * 60 * 60;
 	private String baseUri = "";
 	/** Name of the ehcache, defaults to the fully qualified name of Oembed */
 	private String cacheName = Oembed.class.getName();
+	/** The default user agent */
+	private String userAgent = String.format("Java/%s java-oembed/0.0.5", System.getProperty("java.version"));
+	/** An optional string that is appended to the user agent */
+	private String consumer;
 
 	/**
 	 * Constructs the Oembed Api with the default parsers (json and xml) and 
@@ -161,12 +165,16 @@ public class Oembed {
 					try {
 						final URI api = provider.toApiUrl(url);
 						logger.debug(String.format("Calling url %s", api.toString()));
-						final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(api));
+						final HttpGet request = new HttpGet(api);
+						if(this.userAgent != null)
+							request.setHeader("User-Agent", String.format("%s%s", this.userAgent, this.consumer == null ? "" : "; " + this.consumer));						
+						final HttpResponse httpResponse = this.httpClient.execute(request);
 						if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 							logger.warn(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
-							if(ignoreFailedUrls && cacheManager != null) {
-								OembedResponse emptyResponse = new OembedResponse();
+							if(ignoreFailedUrlsForSeconds != null && cacheManager != null) {
+								final OembedResponse emptyResponse = new OembedResponse();
 								emptyResponse.setEmpty(true);
+								emptyResponse.setCacheAge(ignoreFailedUrlsForSeconds);
 								this.addToCache(url, emptyResponse);
 							}								
 						} else {
@@ -366,11 +374,27 @@ public class Oembed {
 		cache.put(new net.sf.ehcache.Element(url, response, null, null, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge()));
 	}
 
-	public boolean isIgnoreFailedUrls() {
-		return ignoreFailedUrls;
+	public Integer getIgnoreFailedUrlsForSeconds() {
+		return ignoreFailedUrlsForSeconds;
 	}
 
-	public void setIgnoreFailedUrls(boolean ignoreFailedUrls) {
-		this.ignoreFailedUrls = ignoreFailedUrls;
+	public void setIgnoreFailedUrlsForSeconds(Integer ignoreFailedUrlsForSeconds) {
+		this.ignoreFailedUrlsForSeconds = ignoreFailedUrlsForSeconds;
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public String getConsumer() {
+		return consumer;
+	}
+
+	public void setConsumer(String consumer) {
+		this.consumer = consumer;
 	}	
 }

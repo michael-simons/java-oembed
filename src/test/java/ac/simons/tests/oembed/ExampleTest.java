@@ -94,6 +94,7 @@ public class ExampleTest {
 		final Oembed oembed = new Oembed(new DefaultHttpClient());
 		oembed.setCacheManager(cacheManager);
 		oembed.setAutodiscovery(true);
+		oembed.setConsumer("dailyfratze.de");
 		
 		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
 		System.out.println(response);
