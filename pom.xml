@@ -37,7 +37,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.michael-simons</groupId>
 	<artifactId>java-oembed</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.0.8</version>
 	<name>java-oembed</name>
 	<description>Simple Oembed Client for Java EE</description>
 	<build>
@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
-			<version>2.4.4</version>
+			<version>2.4.5</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
