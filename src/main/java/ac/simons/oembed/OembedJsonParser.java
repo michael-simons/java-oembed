@@ -50,8 +50,8 @@ public class OembedJsonParser implements OembedParser {
 		this.objectMapper = new ObjectMapper();
 		final AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
 		   
-		objectMapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
-		objectMapper.getSerializationConfig().setAnnotationIntrospector(introspector);
+		objectMapper.setDeserializationConfig(objectMapper.getDeserializationConfig().withAnnotationIntrospector(introspector));
+		objectMapper.setSerializationConfig(objectMapper.getSerializationConfig().withAnnotationIntrospector(introspector));
 	}
 	
 	@Override
