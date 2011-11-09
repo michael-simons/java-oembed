@@ -53,39 +53,7 @@ public class DefaultOembedProvider implements OembedProvider {
 	private Integer maxWidth;
 	private Integer maxHeight;
 	private List<String> urlSchemes;
-	
-	public DefaultOembedProvider withName(final String name) {
-		this.setName(name);
-		return this;
-	}
-	
-	public DefaultOembedProvider withFormat(final String format) {
-		this.setFormat(format);
-		return this;
-	}
-	
-	public DefaultOembedProvider withEndpoint(final String endpoint) {
-		this.setEndpoint(endpoint);
-		return this;
-	}
-	
-	public DefaultOembedProvider withUrlScheme(final String urlScheme) {
-		if(this.getUrlSchemes() == null)
-			this.setUrlSchemes(new ArrayList<String>());
-		this.getUrlSchemes().add(urlScheme);
-		return this;
-	}
-	
-	public DefaultOembedProvider withMaxHeight(final Integer maxHeight) {
-		this.setMaxHeight(maxHeight);
-		return this;
-	}
-	
-	public DefaultOembedProvider withMaxWidth(final Integer maxWidth) {
-		this.setMaxWidth(maxWidth);
-		return this;
-	}
-	
+		
 	public URI toApiUrl(final String url) throws URISyntaxException {
 		String uri = null;
 		final List<NameValuePair> query = new ArrayList<NameValuePair>();

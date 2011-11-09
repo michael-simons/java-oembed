@@ -97,29 +97,6 @@ public class Oembed {
 		this.parser.put("xml", new OembedXmlParser());
 	}
 
-	/**
-	 * Adds the given provider to the map if the format is supported
-	 * @param provider
-	 * @return
-	 * @throws OembedException
-	 */
-	public Oembed withProvider(final OembedProvider provider) throws OembedException {
-		if(!this.parser.containsKey(provider.getFormat().toLowerCase()))
-			throw new OembedException(String.format("Invalid format %s", provider.getFormat()));
-
-		if(this.getProvider() == null)
-			this.setProvider(new HashMap<String, OembedProvider>());
-		this.getProvider().put(provider.getName(), provider);
-		return this;
-	}
-	
-	public Oembed withHandler(final OembedResponseHandler handler) {
-		if(this.getHandler() == null)
-			this.setHandler(new HashMap<String, OembedResponseHandler>());
-		this.getHandler().put(handler.getFor(), handler);
-		return this;
-	}
-
 	public Map<String, OembedProvider> getProvider() {
 		return provider;
 	}

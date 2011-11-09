@@ -39,10 +39,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ac.simons.oembed.DefaultOembedProvider;
 import ac.simons.oembed.Oembed;
+import ac.simons.oembed.OembedBuilder;
 import ac.simons.oembed.OembedException;
 import ac.simons.oembed.OembedJsonParser;
+import ac.simons.oembed.OembedProviderBuilder;
 import ac.simons.oembed.OembedResponse;
 
 /**
@@ -52,30 +53,34 @@ import ac.simons.oembed.OembedResponse;
  */
 public class ExampleTest {
 	@Test
-	public void youtubeJson() throws OembedException {
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
-		oembed.withProvider(
-				new DefaultOembedProvider()
+	public void youtubeJson() throws OembedException {		
+		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+			.withProviders(
+				new OembedProviderBuilder()
 					.withName("youtube")
 					.withFormat("json")
 					.withMaxWidth(480)
 					.withEndpoint("http://www.youtube.com/oembed")
-					.withUrlScheme("http://(www|de)\\.youtube\\.com/watch\\?v=.*")
-				);
+					.withUrlSchemes("http://(www|de)\\.youtube\\.com/watch\\?v=.*")
+					.build()
+				)
+			.build();
 		OembedResponse response = oembed.transformUrl("http://www.youtube.com/watch?v=lh_em3-ndVw");
 		System.out.println(response);
 	}
 	
 	@Test
 	public void flickrXml() throws OembedException {
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
-		oembed.withProvider(
-				new DefaultOembedProvider()
+		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+			.withProviders(
+				new OembedProviderBuilder()
 					.withName("flickr")
 					.withFormat("xml")
 					.withEndpoint("http://www.flickr.com/services/oembed")
-					.withUrlScheme("http://www\\.flickr\\.(com|de)/photos/.*")
-				);
+					.withUrlSchemes("http://www\\.flickr\\.(com|de)/photos/.*")
+					.build()
+				)
+			.build();
 		OembedResponse response = oembed.transformUrl("http://www.flickr.com/photos/caitysparkles/5263331070/");
 		System.out.println(response);
 	}
@@ -91,24 +96,25 @@ public class ExampleTest {
 	@Test
 	public void dailyfratzeThroughCache() throws OembedException {
 		final CacheManager cacheManager = CacheManager.create();		
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
-		oembed.setCacheManager(cacheManager);
-		oembed.setAutodiscovery(true);
-		oembed.setConsumer("dailyfratze.de");
+		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+			.withCacheManager(cacheManager)
+			.withAutodiscovery(true)
+			.withConsumer("dailyfratze.de")
+			.withProviders(
+				new OembedProviderBuilder()
+					.withName("flickr")
+					.withFormat("xml")
+					.withEndpoint("http://www.flickr.com/services/oembed")
+					.withUrlSchemes("http://www\\.flickr\\.(com|de)/photos/.*")
+					.build()
+				)
+			.build();
 		
 		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
 		System.out.println(response);
 		
 		response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
-		System.out.println(response);		
-		
-		oembed.withProvider(
-				new DefaultOembedProvider()
-					.withName("flickr")
-					.withFormat("xml")
-					.withEndpoint("http://www.flickr.com/services/oembed")
-					.withUrlScheme("http://www\\.flickr\\.(com|de)/photos/.*")
-				);
+		System.out.println(response);
 				
 		// 404 etc. is not called twice		
 		response = oembed.transformUrl("http://www.flickr.com/photos/idontexists/123456/");
