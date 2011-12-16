@@ -37,11 +37,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.michael-simons</groupId>
 	<artifactId>java-oembed</artifactId>
-	<version>0.0.10-SNAPSHOT</version>
+	<version>0.0.10</version>
 	<name>java-oembed</name>
 	<description>Simple Oembed Client for Java EE</description>
 	<properties>		
-		<org.codehaus.jackson.version>1.8.5</org.codehaus.jackson.version>
+		<org.codehaus.jackson.version>1.8.6</org.codehaus.jackson.version>
 	</properties>
 	<build>
 		<plugins>
@@ -105,19 +105,19 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.4</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- Needed for HttpClient -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.4</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
