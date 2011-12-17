@@ -74,7 +74,7 @@ public class OembedBuilder {
 		return this;
 	}
 
-	public OembedBuilder withIgnoreFailedUrlsForSeconds(Integer ignoreFailedUrlsForSeconds) {
+	public OembedBuilder withIgnoreFailedUrlsForSeconds(Long ignoreFailedUrlsForSeconds) {
 		oembed.setIgnoreFailedUrlsForSeconds(ignoreFailedUrlsForSeconds);
 		return this;
 	}

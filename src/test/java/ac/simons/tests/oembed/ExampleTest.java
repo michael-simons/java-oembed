@@ -86,6 +86,25 @@ public class ExampleTest {
 	}
 	
 	@Test
+	public void twitterJson() throws OembedException {
+		final CacheManager cacheManager = CacheManager.create();
+		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+			.withCacheManager(cacheManager)
+			.withProviders(
+				new OembedProviderBuilder()
+					.withName("twitter")
+					.withFormat("json")
+					.withMaxWidth(480)
+					.withEndpoint("https://api.twitter.com/1/statuses/oembed.%{format}")
+					.withUrlSchemes("https?://twitter.com/#!/[a-z0-9_]{1,20}/status/\\d+")
+					.build()
+				)
+			.build();
+		OembedResponse response = oembed.transformUrl("http://twitter.com/#!/twitterapi/status/144840776101273600");
+		System.out.println(response);
+	}
+	
+	@Test
 	public void dailyfratze() throws OembedException {
 		final Oembed oembed = new Oembed(new DefaultHttpClient());
 		oembed.setAutodiscovery(true);

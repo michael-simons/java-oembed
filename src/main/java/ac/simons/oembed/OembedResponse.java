@@ -76,7 +76,7 @@ public class OembedResponse implements Serializable {
 	@XmlElement(name="provider_url")
 	private String providerUrl;
 	@XmlElement(name="cache_age")
-	private Integer cacheAge;
+	private Long cacheAge;
 	@XmlElement(name="thumbnail_url")
 	private String thumbnailUrl;
 	@XmlElement(name="thumbnail_width")
@@ -172,11 +172,11 @@ public class OembedResponse implements Serializable {
 		this.providerUrl = providerUrl;
 	}
 		
-	public Integer getCacheAge() {
+	public Long getCacheAge() {
 		return cacheAge;
 	}
 	
-	public void setCacheAge(Integer cacheAge) {
+	public void setCacheAge(Long cacheAge) {
 		this.cacheAge = cacheAge;
 	}
 		

@@ -58,6 +58,9 @@ import org.slf4j.LoggerFactory;
  * @author Michael J. Simons
  */
 public class Oembed {
+	private final Long MIN_VALID_CACHE_AGE = new Long(Integer.MIN_VALUE);
+	private final Long MAX_VALID_CACHE_AGE = new Long(Integer.MAX_VALUE);
+	
 	/** The logger */
 	private final Logger logger = LoggerFactory.getLogger(Oembed.class);
 	/** The HttpClient instance for all  requests. It should be configured for multithreading */
@@ -75,12 +78,12 @@ public class Oembed {
 	/** Flag, if autodiscovery is enabled when there is no provider for a specific url. Defaults to false */
 	private boolean autodiscovery = false;
 	/** If this is not null and <tt>cacheManager</tt> is not null, failed urls aren't called for the given amount of seconds */
-	private Integer ignoreFailedUrlsForSeconds = 24 * 60 * 60;
+	private Long ignoreFailedUrlsForSeconds = new Long(24 * 60 * 60);
 	private String baseUri = "";
 	/** Name of the ehcache, defaults to the fully qualified name of Oembed */
 	private String cacheName = Oembed.class.getName();
 	/** The default user agent */
-	private String userAgent = String.format("Java/%s java-oembed/0.0.11-SNAPSHOT", System.getProperty("java.version"));
+	private String userAgent = String.format("Java/%s java-oembed/0.1.1", System.getProperty("java.version"));
 	/** An optional string that is appended to the user agent */
 	private String consumer;
 
@@ -171,6 +174,8 @@ public class Oembed {
 					} catch(NullPointerException e) {
 						throw new OembedException(String.format("NPE, probably invalid format :%s", provider.getFormat()));
 					} catch (URISyntaxException e) {
+						throw new OembedException(e);
+					} catch(Exception e) {
 						throw new OembedException(e);
 					}
 				}
@@ -348,14 +353,14 @@ public class Oembed {
 	
 	protected void addToCache(final String url, final OembedResponse response) {
 		final Ehcache cache = this.cacheManager.getCache(this.cacheName);		
-		cache.put(new net.sf.ehcache.Element(url, response, null, null, response.getCacheAge() != null ? response.getCacheAge() : this.getDefaultCacheAge()));
+		cache.put(new net.sf.ehcache.Element(url, response, null, null, response.getCacheAge() != null ? new Long(Math.min(Math.max(MIN_VALID_CACHE_AGE, response.getCacheAge()), MAX_VALID_CACHE_AGE)).intValue() : this.getDefaultCacheAge()));
 	}
 
-	public Integer getIgnoreFailedUrlsForSeconds() {
+	public Long getIgnoreFailedUrlsForSeconds() {
 		return ignoreFailedUrlsForSeconds;
 	}
 
-	public void setIgnoreFailedUrlsForSeconds(Integer ignoreFailedUrlsForSeconds) {
+	public void setIgnoreFailedUrlsForSeconds(Long ignoreFailedUrlsForSeconds) {
 		this.ignoreFailedUrlsForSeconds = ignoreFailedUrlsForSeconds;
 	}
 
