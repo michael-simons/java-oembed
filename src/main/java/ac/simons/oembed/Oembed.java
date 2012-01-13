@@ -83,7 +83,7 @@ public class Oembed {
 	/** Name of the ehcache, defaults to the fully qualified name of Oembed */
 	private String cacheName = Oembed.class.getName();
 	/** The default user agent */
-	private String userAgent = String.format("Java/%s java-oembed/0.1.2", System.getProperty("java.version"));
+	private String userAgent = String.format("Java/%s java-oembed/0.1.3-SNAPSHOT", System.getProperty("java.version"));
 	/** An optional string that is appended to the user agent */
 	private String consumer;
 
