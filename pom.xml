@@ -37,11 +37,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.michael-simons</groupId>
 	<artifactId>java-oembed</artifactId>
-	<version>0.1.3-SNAPSHOT</version>
+	<version>0.1.3</version>
 	<name>java-oembed</name>
 	<description>Simple Oembed Client for Java EE</description>
 	<properties>		
-		<org.codehaus.jackson.version>1.8.6</org.codehaus.jackson.version>
+		<org.codehaus.jackson.version>1.8.8</org.codehaus.jackson.version>
 	</properties>
 	<build>
 		<plugins>
