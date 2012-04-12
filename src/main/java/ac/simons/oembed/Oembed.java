@@ -84,7 +84,7 @@ public class Oembed {
 	/** Name of the ehcache, defaults to the fully qualified name of Oembed */
 	private String cacheName = Oembed.class.getName();
 	/** The default user agent */
-	private String userAgent = String.format("Java/%s java-oembed/0.1.3-SNAPSHOT", System.getProperty("java.version"));
+	private String userAgent;
 	/** An optional string that is appended to the user agent */
 	private String consumer;
 
@@ -159,7 +159,7 @@ public class Oembed {
 							request.setHeader("User-Agent", String.format("%s%s", this.userAgent, this.consumer == null ? "" : "; " + this.consumer));						
 						final HttpResponse httpResponse = this.httpClient.execute(request);
 						if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-							logger.warn(String.format("Server returned error %d: %s", httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
+							logger.warn(String.format("Server returned error %d for '%s': %s", httpResponse.getStatusLine().getStatusCode(), url, EntityUtils.toString(httpResponse.getEntity())));
 							if(ignoreFailedUrlsForSeconds != null && cacheManager != null) {
 								final OembedResponse emptyResponse = new OembedResponse();
 								emptyResponse.setEmpty(true);
