@@ -38,6 +38,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
@@ -98,6 +99,14 @@ public class Oembed {
 		this.parser = new HashMap<String, OembedParser>();
 		this.parser.put("json", new OembedJsonParser());
 		this.parser.put("xml", new OembedXmlParser());
+		
+		final Properties version = new Properties();
+		try {
+			version.load(Oembed.class.getResourceAsStream("/ac/simons/oembed/version.properties"));
+		} catch(IOException e) {
+		}
+		this.userAgent = String.format("Java/%s java-oembed/%s", System.getProperty("java.version"), version.getProperty("ac.simons.oembed.version"));
+		logger.info(String.format("Oembed (%s) ready...", this.userAgent));
 	}
 
 	public Map<String, OembedProvider> getProvider() {
