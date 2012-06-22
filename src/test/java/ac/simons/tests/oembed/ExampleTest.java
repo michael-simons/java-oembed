@@ -36,6 +36,7 @@ package ac.simons.tests.oembed;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -115,7 +116,7 @@ public class ExampleTest {
 	@Test
 	public void dailyfratzeThroughCache() throws OembedException {
 		final CacheManager cacheManager = CacheManager.create();		
-		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+		final Oembed oembed = new OembedBuilder(new DefaultHttpClient(new PoolingClientConnectionManager()))
 			.withCacheManager(cacheManager)
 			.withAutodiscovery(true)
 			.withConsumer("dailyfratze.de")
