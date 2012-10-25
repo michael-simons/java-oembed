@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
@@ -50,7 +51,11 @@ public class OembedJsonParser implements OembedParser {
 		this.objectMapper = new ObjectMapper();
 		final AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
 		   
-		objectMapper.setDeserializationConfig(objectMapper.getDeserializationConfig().withAnnotationIntrospector(introspector));
+		objectMapper.setDeserializationConfig(
+				objectMapper.getDeserializationConfig()
+					.withAnnotationIntrospector(introspector)
+					.without(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES)
+		);
 		objectMapper.setSerializationConfig(objectMapper.getSerializationConfig().withAnnotationIntrospector(introspector));
 	}
 	

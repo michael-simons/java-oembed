@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -49,6 +50,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 @XmlRootElement(name="oembed")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonSerialize(include=Inclusion.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class OembedResponse implements Serializable {
 	private static final long serialVersionUID = -1965788850835022977L;
 

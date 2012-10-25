@@ -87,6 +87,22 @@ public class ExampleTest {
 	}
 	
 	@Test
+	public void flickrJson() throws OembedException {
+		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+			.withProviders(
+				new OembedProviderBuilder()
+					.withName("flickr")
+					.withFormat("json")
+					.withEndpoint("http://www.flickr.com/services/oembed")
+					.withUrlSchemes("http://www\\.flickr\\.(com|de)/photos/.*")
+					.build()
+				)
+			.build();
+		OembedResponse response = oembed.transformUrl("http://www.flickr.com/photos/pierrehanquin/6948565021");
+		System.out.println(response);
+	}
+	
+	@Test
 	public void twitterJson() throws OembedException {
 		final CacheManager cacheManager = CacheManager.create();
 		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
