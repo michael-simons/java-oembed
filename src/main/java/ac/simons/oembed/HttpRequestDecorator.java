@@ -42,13 +42,6 @@ import org.apache.http.HttpRequest;
  * It can be used to add oauth for example
  * @author Michael J. Simons, 2012-10-25
  */
-public interface HttpRequestDecorator {
-	public static enum OembedPhase {
-		/** Used when autodiscovering content */
-		autodiscover,
-		/** Used when actually calling the oembed provider */
-		transform
-	}
-		
-	public <T extends HttpRequest> T decorate(final T httpRequest, final OembedPhase phase);	
+public interface HttpRequestDecorator {		
+	public <T extends HttpRequest> T decorate(final T httpRequest);	
 }

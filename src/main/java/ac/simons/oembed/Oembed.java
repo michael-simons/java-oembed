@@ -55,8 +55,6 @@ import org.jsoup.nodes.Entities.EscapeMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ac.simons.oembed.HttpRequestDecorator.OembedPhase;
-
 /**
  * @author Michael J. Simons
  */
@@ -89,8 +87,6 @@ public class Oembed {
 	private String userAgent;
 	/** An optional string that is appended to the user agent */
 	private String consumer;
-	/** A decorator that can manipulate / decorate the request before executing */
-	private HttpRequestDecorator httpRequestDecorator = new DefaultHttpRequestDecorator();
 
 	/**
 	 * Constructs the Oembed Api with the default parsers (json and xml) and 
@@ -161,7 +157,7 @@ public class Oembed {
 						final HttpGet request = new HttpGet(api);
 						if(this.userAgent != null)
 							request.setHeader("User-Agent", String.format("%s%s", this.userAgent, this.consumer == null ? "" : "; " + this.consumer));						
-						final HttpResponse httpResponse = this.httpClient.execute(this.httpRequestDecorator.decorate(request, OembedPhase.transform));
+						final HttpResponse httpResponse = this.httpClient.execute(provider.getHttpRequestDecorator().decorate(request));
 						if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 							logger.warn(String.format("Server returned error %d for '%s': %s", httpResponse.getStatusLine().getStatusCode(), url, EntityUtils.toString(httpResponse.getEntity())));
 							if(ignoreFailedUrlsForSeconds != null && cacheManager != null) {
@@ -242,6 +238,7 @@ public class Oembed {
 					a.remove();
 				}
 			} catch (OembedException e) {
+				logger.warn(String.format("Skipping '%s': %s", href, e.getMessage()));
 			}
 		}
 		if(changedBaseUri)
@@ -273,7 +270,7 @@ public class Oembed {
 		
 		try {
 			final HttpGet request = new HttpGet(url);
-			final HttpResponse httpResponse = this.httpClient.execute(this.httpRequestDecorator.decorate(request, OembedPhase.autodiscover));
+			final HttpResponse httpResponse = this.httpClient.execute(request);
 			if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
 				logger.warn(String.format("Autodiscovery for %s failed, server returned error %d: %s", url, httpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(httpResponse.getEntity())));
 			else {				
@@ -391,13 +388,5 @@ public class Oembed {
 
 	public void setConsumer(String consumer) {
 		this.consumer = consumer;
-	}
-
-	public HttpRequestDecorator getHttpRequestDecorator() {
-		return httpRequestDecorator;
-	}
-
-	public void setHttpRequestDecorator(HttpRequestDecorator httpRequestDecorator) {
-		this.httpRequestDecorator = httpRequestDecorator;
 	}
 }

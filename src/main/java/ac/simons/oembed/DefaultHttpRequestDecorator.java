@@ -41,7 +41,7 @@ import org.apache.http.HttpRequest;
  */
 public class DefaultHttpRequestDecorator implements HttpRequestDecorator {
 	@Override
-	public <T extends HttpRequest> T decorate(T httpRequest, OembedPhase phase) {
+	public <T extends HttpRequest> T decorate(T httpRequest) {
 		return httpRequest;
 	}	
 }

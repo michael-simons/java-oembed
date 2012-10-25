@@ -47,6 +47,7 @@ public class AutodiscoveredOembedProvider implements OembedProvider {
 	private final URI apiUrl;
 	private final String name;
 	private String format;
+	private HttpRequestDecorator httpRequestDecorator = new DefaultHttpRequestDecorator();
 	
 	public AutodiscoveredOembedProvider(final String originalUrl, final URI apiUrl, final String format) {
 		this.urlSchemes.add(originalUrl);
@@ -73,5 +74,10 @@ public class AutodiscoveredOembedProvider implements OembedProvider {
 	@Override
 	public URI toApiUrl(String url) throws URISyntaxException {
 		return this.apiUrl;
+	}
+
+	@Override
+	public HttpRequestDecorator getHttpRequestDecorator() {
+		return this.httpRequestDecorator;
 	}
 }

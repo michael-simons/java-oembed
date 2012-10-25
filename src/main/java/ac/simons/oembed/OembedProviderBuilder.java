@@ -33,6 +33,7 @@
  */
 package ac.simons.oembed;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 /**
@@ -76,6 +77,13 @@ public class OembedProviderBuilder {
 		return this;
 	}
 
+	public OembedProviderBuilder withHttpRequestDecorator(HttpRequestDecorator httpRequestDecorator) {
+		if(httpRequestDecorator == null)
+			throw new InvalidParameterException("HttpRequestDecorator may not be null!");
+		this.oembedProvider.setHttpRequestDecorator(httpRequestDecorator);
+		return this;
+	}
+	
 	public OembedProvider build() {
 		return oembedProvider;
 	}

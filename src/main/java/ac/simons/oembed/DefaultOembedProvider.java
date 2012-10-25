@@ -53,6 +53,8 @@ public class DefaultOembedProvider implements OembedProvider {
 	private Integer maxWidth;
 	private Integer maxHeight;
 	private List<String> urlSchemes;
+	/** A decorator that can manipulate / decorate the request before executing */
+	private HttpRequestDecorator httpRequestDecorator = new DefaultHttpRequestDecorator();
 		
 	public URI toApiUrl(final String url) throws URISyntaxException {
 		String uri = null;
@@ -118,5 +120,13 @@ public class DefaultOembedProvider implements OembedProvider {
 
 	public void setMaxHeight(Integer maxHeight) {
 		this.maxHeight = maxHeight;
+	}
+
+	public HttpRequestDecorator getHttpRequestDecorator() {
+		return httpRequestDecorator;
+	}
+
+	public void setHttpRequestDecorator(HttpRequestDecorator httpRequestDecorator) {
+		this.httpRequestDecorator = httpRequestDecorator;
 	}
 }

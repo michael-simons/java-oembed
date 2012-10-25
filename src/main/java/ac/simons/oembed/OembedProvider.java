@@ -48,4 +48,6 @@ public interface OembedProvider {
 	public List<String> getUrlSchemes();
 	
 	public URI toApiUrl(final String url) throws URISyntaxException;
+	
+	public HttpRequestDecorator getHttpRequestDecorator();
 }
