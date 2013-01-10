@@ -357,7 +357,7 @@ public class Oembed {
 		OembedResponse rv = null;
 		final net.sf.ehcache.Element element = cache.get(key);
 		if(element != null)
-			rv = (OembedResponse) element.getValue();
+			rv = (OembedResponse) element.getObjectValue();
 		return rv;
 	}	
 	
