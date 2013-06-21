@@ -222,4 +222,21 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<organization>
+		<name>michael-simons.eu</name>
+		<url>http://michael-simons.eu</url>
+	</organization>
+	<inceptionYear>2010</inceptionYear>
+	<developers>
+		<developer>
+			<name>Michael Simons</name>
+			<email>michael@simons.ac</email>
+		</developer>
+	</developers>
+	<url>http://info.michael-simons.eu/2011/12/20/oembedding-twitter-updates-with-java-and-wordpress/</url>
+	<scm>
+		<connection>scm:git:ssh://msimons@dagobah.michael-simons.eu:2109/~/repos/java-oembed.git</connection>
+		<developerConnection>scm:git:ssh://msimons@dagobah.michael-simons.eu:2109/~/repos/java-oembed.git</developerConnection>
+		<url>https://github.com/michael-simons/java-oembed</url>
+	</scm>
 </project>
