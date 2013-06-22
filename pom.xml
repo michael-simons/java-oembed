@@ -38,8 +38,24 @@
 	<groupId>eu.michael-simons</groupId>
 	<artifactId>java-oembed</artifactId>
 	<version>0.2.10-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	
 	<name>java-oembed</name>
 	<description>Simple Oembed Client for Java EE</description>
+	
+	<licenses>
+		<license>
+			<name>Revised BSD License</name>
+			<url>http://opensource.org/licenses/BSD-3-Clause</url>
+		</license>
+	</licenses>
+		
 	<properties>		
 		<org.codehaus.jackson.version>1.9.12</org.codehaus.jackson.version>
 	</properties>
@@ -235,8 +251,8 @@
 	</developers>
 	<url>http://info.michael-simons.eu/2011/12/20/oembedding-twitter-updates-with-java-and-wordpress/</url>
 	<scm>
-		<connection>scm:git:ssh://msimons@dagobah.michael-simons.eu:2109/~/repos/java-oembed.git</connection>
-		<developerConnection>scm:git:ssh://msimons@dagobah.michael-simons.eu:2109/~/repos/java-oembed.git</developerConnection>
+		<connection>scm:git:git@github.com:michael-simons/java-oembed.git</connection>
+		<developerConnection>scm:git:git@github.com:michael-simons/java-oembed.git</developerConnection>
 		<url>https://github.com/michael-simons/java-oembed</url>
 	</scm>
 </project>
