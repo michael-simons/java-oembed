@@ -10,6 +10,18 @@ java-oembed can be configured to use an "ehcache CacheManager instance":http://e
 
 h2. Usage
 
+h3. Dependency:
+
+java-oembed is available in the Central Repository (since 0.2.10):
+
+<pre><code>
+<dependency>
+    <groupId>eu.michael-simons</groupId>
+    <artifactId>java-oembed</artifactId>
+    <version>0.2.10</version>
+</dependency>
+</code></pre>	
+
 h3. In a Spring 3.x application
 
 The the httpClient reference must an instance of org.apache.http.client.HttpClient, the memcachedClient property is optional and is an instance of net.rubyeye.xmemcached.MemcachedClient.
