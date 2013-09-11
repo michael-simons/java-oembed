@@ -23,7 +23,7 @@
 	</licenses>
 		
 	<properties>		
-		<org.codehaus.jackson.version>1.9.12</org.codehaus.jackson.version>
+		<org.codehaus.jackson.version>1.9.13</org.codehaus.jackson.version>
 	</properties>
 	<build>
 		<plugins>
