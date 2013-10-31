@@ -35,8 +35,8 @@ package ac.simons.tests.oembed;
 
 import net.sf.ehcache.CacheManager;
 
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ import ac.simons.oembed.OembedResponse;
 public class ExampleTest {
 	@Test
 	public void youtubeJson() throws OembedException {		
-		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+		final Oembed oembed = new OembedBuilder(HttpClients.createDefault())
 			.withProviders(
 				new OembedProviderBuilder()
 					.withName("youtube")
@@ -72,7 +72,7 @@ public class ExampleTest {
 	
 	@Test
 	public void flickrXml() throws OembedException {
-		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+		final Oembed oembed = new OembedBuilder(HttpClients.createDefault())
 			.withProviders(
 				new OembedProviderBuilder()
 					.withName("flickr")
@@ -88,7 +88,7 @@ public class ExampleTest {
 	
 	@Test
 	public void flickrJson() throws OembedException {
-		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+		final Oembed oembed = new OembedBuilder(HttpClients.createDefault())
 			.withProviders(
 				new OembedProviderBuilder()
 					.withName("flickr")
@@ -105,7 +105,7 @@ public class ExampleTest {
 	@Test
 	public void twitterJson() throws OembedException {
 		final CacheManager cacheManager = CacheManager.create();
-		final Oembed oembed = new OembedBuilder(new DefaultHttpClient())
+		final Oembed oembed = new OembedBuilder(HttpClients.createDefault())
 			.withCacheManager(cacheManager)
 			.withProviders(
 				new OembedProviderBuilder()
@@ -123,7 +123,7 @@ public class ExampleTest {
 	
 	@Test
 	public void dailyfratze() throws OembedException {
-		final Oembed oembed = new Oembed(new DefaultHttpClient());
+		final Oembed oembed = new Oembed(HttpClients.createDefault());
 		oembed.setAutodiscovery(true);
 		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/22");
 		System.out.println(response);
@@ -132,7 +132,7 @@ public class ExampleTest {
 	@Test
 	public void dailyfratzeThroughCache() throws OembedException {
 		final CacheManager cacheManager = CacheManager.create();		
-		final Oembed oembed = new OembedBuilder(new DefaultHttpClient(new PoolingClientConnectionManager()))
+		final Oembed oembed = new OembedBuilder(HttpClients.createMinimal(new PoolingHttpClientConnectionManager()))
 			.withCacheManager(cacheManager)
 			.withAutodiscovery(true)
 			.withConsumer("dailyfratze.de")
@@ -146,10 +146,10 @@ public class ExampleTest {
 				)
 			.build();
 		
-		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
+		OembedResponse response = oembed.transformUrl("http://dailyfratze.de/eller82/2013/5/1");
 		System.out.println(response);
 		
-		response = oembed.transformUrl("http://dailyfratze.de/michael/2010/8/23");
+		response = oembed.transformUrl("http://dailyfratze.de/eller82/2013/5/1");
 		System.out.println(response);
 				
 		// 404 etc. is not called twice		
