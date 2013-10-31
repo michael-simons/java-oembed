@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.michael-simons</groupId>
 	<artifactId>java-oembed</artifactId>
-	<version>0.2.13</version>
+	<version>0.2.14-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<parent>
