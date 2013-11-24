@@ -59,6 +59,14 @@ public class OembedJsonParser implements OembedParser {
 		objectMapper.setSerializationConfig(objectMapper.getSerializationConfig().withAnnotationIntrospector(introspector));
 	}
 	
+	/**
+	 * Hook to provide a custom object mapper with custom serializer / deserializer
+	 * @param objectMapper
+	 */
+	public OembedJsonParser(final ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
+	
 	@Override
 	public OembedResponse unmarshal(InputStream httpResponse) throws OembedException {
 		try {			
