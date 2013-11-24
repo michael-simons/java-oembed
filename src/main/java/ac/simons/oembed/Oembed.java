@@ -122,6 +122,16 @@ public class Oembed {
 	}
 
 	/**
+	 * Sets the parser for the given format, returns the old parser if any
+	 * @param format
+	 * @param parser
+	 * @return
+	 */
+	public OembedParser setParser(final String format, final OembedParser parser) {
+		return this.parser.put(format, parser);
+	}
+	
+	/**
 	 * Transforms the given URL into an OembedResponse. Returns null if
 	 * there is no provider configured for this url.
 	 * @param url
