@@ -58,7 +58,7 @@ public class DefaultOembedProvider implements OembedProvider {
 		
 	public URI toApiUrl(final String url) throws URISyntaxException {
 		String uri = null;
-		final List<NameValuePair> query = new ArrayList<NameValuePair>();
+		final List<NameValuePair> query = new ArrayList<>();
 
 		if(this.getEndpoint().toLowerCase().contains("%{format}"))
 			uri = this.getEndpoint().replaceAll(Pattern.quote("%{format}"), this.getFormat());

@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class AutodiscoveredOembedProvider implements OembedProvider {
 	/** The autodiscovered provider supports only one scheme... */
-	private List<String> urlSchemes = new ArrayList<String>();
+	private List<String> urlSchemes = new ArrayList<>();
 	private final URI apiUrl;
 	private final String name;
 	private String format;
