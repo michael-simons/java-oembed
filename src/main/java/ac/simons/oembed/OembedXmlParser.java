@@ -67,11 +67,9 @@ public class OembedXmlParser implements OembedParser {
 
 	@Override
 	public String marshal(OembedResponse oembedResponse) throws OembedException {
-		try {
-			final StringWriter out = new StringWriter();
+		try (final StringWriter out = new StringWriter()) {			
 			jaxbContext.createMarshaller().marshal(oembedResponse, out);
-			out.flush();
-			out.close();
+			out.flush();			
 			return out.toString();
 		} catch (Exception e) {
 			throw new OembedException(e);

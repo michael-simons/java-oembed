@@ -46,6 +46,7 @@ import ac.simons.oembed.OembedException;
 import ac.simons.oembed.OembedJsonParser;
 import ac.simons.oembed.OembedProviderBuilder;
 import ac.simons.oembed.OembedResponse;
+import ac.simons.oembed.OembedXmlParser;
 
 /**
  * Not a real test but a simple demonstration how to use oembed
@@ -167,6 +168,16 @@ public class ExampleTest {
 		oembedResponse.setSource("Should be ignored");
 		oembedResponse.setAuthorName("Michael Simons");		
 		OembedJsonParser p = new OembedJsonParser();
+		System.out.println(p.marshal(oembedResponse));
+	}
+	
+	@Test
+	public void xmlMarshall() throws OembedException {
+		OembedResponse oembedResponse = new OembedResponse();
+		oembedResponse.setHtml("<div>foobar</div>");
+		oembedResponse.setSource("Should be ignored");
+		oembedResponse.setAuthorName("Michael Simons");		
+		OembedXmlParser p = new OembedXmlParser();
 		System.out.println(p.marshal(oembedResponse));
 	}
 }

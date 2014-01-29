@@ -67,9 +67,9 @@ public class Oembed {
 	/** The HttpClient instance for all  requests. It should be configured for multithreading */
 	private final HttpClient httpClient;
 	/** The map of known providers */
-	private Map<String, OembedProvider> provider = new HashMap<String, OembedProvider>();
+	private Map<String, OembedProvider> provider = new HashMap<>();
 	/** Optional handlers for providers registered in {@link #provider} */
-	private Map<String, OembedResponseHandler> handler = new HashMap<String, OembedResponseHandler>();
+	private Map<String, OembedResponseHandler> handler = new HashMap<>();
 	/** The map of all known parsers. For now, only json and xml exists */
 	private Map<String, OembedParser> parser;
 	/** Optional ehcache client for caching valid oembed responses */
@@ -96,7 +96,7 @@ public class Oembed {
 	public Oembed(final HttpClient httpClient) {
 		this.httpClient = httpClient;
 
-		this.parser = new HashMap<String, OembedParser>();
+		this.parser = new HashMap<>();
 		this.parser.put("json", new OembedJsonParser());
 		this.parser.put("xml", new OembedXmlParser());
 		
@@ -188,12 +188,10 @@ public class Oembed {
 								}
 							}
 						}
-					} catch(IOException e) {
+					} catch(IOException | URISyntaxException e) {
 						throw new OembedException(e);
 					} catch(NullPointerException e) {
 						throw new OembedException(String.format("NPE, probably invalid format :%s", provider.getFormat()));
-					} catch (URISyntaxException e) {
-						throw new OembedException(e);
 					} catch(Exception e) {
 						throw new OembedException(e);
 					}
