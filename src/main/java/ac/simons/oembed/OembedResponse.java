@@ -39,28 +39,29 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * @author Michael J. Simons
+ * @author Michael J. Simons, 2010-12-24
  */
 @XmlRootElement(name="oembed")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonSerialize(include=Inclusion.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class OembedResponse implements Serializable {
 	private static final long serialVersionUID = -1965788850835022977L;
 
 	/** This one is not mapped to json and xml but set right after parsing. The source equals the provider name */	
-	@javax.xml.bind.annotation.XmlTransient
+	@XmlTransient
 	private String source;
 	/** This is the original url which got transformed */
-	@javax.xml.bind.annotation.XmlTransient
+	@XmlTransient
 	private String originalUrl;
-	@javax.xml.bind.annotation.XmlTransient
+	@XmlTransient
 	private boolean empty = false;
 	
 	@XmlElement(name="type")

@@ -36,10 +36,10 @@ package ac.simons.oembed;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 
 /**
  * @author Michael J. Simons
@@ -48,15 +48,10 @@ public class OembedJsonParser implements OembedParser {
 	private final ObjectMapper objectMapper;
 	
 	public OembedJsonParser() {
-		this.objectMapper = new ObjectMapper();
-		final AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-		   
-		objectMapper.setDeserializationConfig(
-				objectMapper.getDeserializationConfig()
-					.withAnnotationIntrospector(introspector)
-					.without(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES)
-		);
-		objectMapper.setSerializationConfig(objectMapper.getSerializationConfig().withAnnotationIntrospector(introspector));
+		this.objectMapper = new ObjectMapper()
+			.setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()))
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			;
 	}
 	
 	/**
