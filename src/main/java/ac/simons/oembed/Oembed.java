@@ -220,8 +220,8 @@ public class Oembed {
 	 * It returns the html representation of the new document.<br>
 	 * If there's an error or no oembed result for an url, the anchor tag
 	 * will be left as it was. 
-	 * @param documentHtml
-	 * @return
+	 * @param document The document that should be checked for links to transform
+	 * @return the transformed document
 	 */
 	public Document transformDocument(final Document document) {
 		boolean changedBaseUri = false;

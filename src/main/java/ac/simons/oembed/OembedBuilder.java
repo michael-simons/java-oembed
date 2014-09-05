@@ -86,7 +86,7 @@ public class OembedBuilder {
 	
 	/**
 	 * Adds the given providers to the map if the format is supported
-	 * @param provider
+	 * @param providers list of oembed providers
 	 * @return
 	 */
 	public OembedBuilder withProviders(final OembedProvider... providers) {
