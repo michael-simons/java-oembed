@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 /**
@@ -71,7 +71,8 @@ public class DefaultOembedProvider implements OembedProvider {
 			query.add(new BasicNameValuePair("maxwidth", this.getMaxWidth().toString()));
 		if(this.getMaxHeight() != null)
 			query.add(new BasicNameValuePair("maxheight", this.getMaxHeight().toString()));
-		return new URI(String.format("%s?%s", uri, URLEncodedUtils.format(query, "UTF-8")));
+		
+		return new URIBuilder(uri).addParameters(query).build();		
 	}
 	
 	public String getName() {
