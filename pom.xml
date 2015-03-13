@@ -23,7 +23,7 @@
 	</licenses>
 		
 	<properties>		
-		<versions.jackson>2.4.3</versions.jackson>		
+		<versions.jackson>2.5.1</versions.jackson>		
 	</properties>
 	<build>
 		<plugins>
