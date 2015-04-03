@@ -91,9 +91,9 @@ public class OembedResponse implements Serializable {
 	@XmlElement(name="html")
 	private String html;
 	@XmlElement(name="width")
-	private Integer width;
+	private String width;
 	@XmlElement(name="height")
-	private Integer height;
+	private String height;
 
 	/**
 	 * @param possibleSource
@@ -223,19 +223,19 @@ public class OembedResponse implements Serializable {
 		this.html = html;
 	}
 	
-	public Integer getWidth() {
+	public String getWidth() {
 		return width;
 	}
 
-	public void setWidth(Integer width) {
+	public void setWidth(String width) {
 		this.width = width;
 	}
 	
-	public Integer getHeight() {
+	public String getHeight() {
 		return height;
 	}
 
-	public void setHeight(Integer height) {
+	public void setHeight(String height) {
 		this.height = height;
 	}
 
@@ -274,7 +274,9 @@ public class OembedResponse implements Serializable {
 	
 	private String renderPhoto() {
 		final String _title = this.getTitle() == null ? "" : this.getTitle();
-		return String.format("<img src=\"%s\" style=\"width:%dpx; height:%dpx;\" alt=\"%s\" title=\"%s\"/>", this.getUrl(), this.getWidth(), this.getHeight(), _title, _title);
+        final String width = this.getWidth() == null ? "" : this.getWidth() + (this.getWidth().contains("%") ? "" : "px");
+        final String height = this.getHeight() == null ? "" : this.getHeight() + (this.getHeight().contains("%") ? "" : "px");
+		return String.format("<img src=\"%s\" style=\"width:%d; height:%d;\" alt=\"%s\" title=\"%s\"/>", this.getUrl(), width, height, _title, _title);
 	}
 	
 	private String renderLink() {
