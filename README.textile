@@ -24,7 +24,7 @@ java-oembed is available in the Central Repository (since 0.2.10):
 
 h3. In a Spring 3.x application
 
-The the httpClient reference must an instance of org.apache.http.client.HttpClient, the memcachedClient property is optional and is an instance of net.rubyeye.xmemcached.MemcachedClient.
+The the httpClient reference must an instance of org.apache.http.client.HttpClient, the cacheManager property is optional and is an instance of net.sf.ehcache.CacheManager.
 
 <pre><code>
 <bean name="oembed" class="ac.simons.oembed.Oembed">
