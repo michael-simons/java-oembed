@@ -16,7 +16,7 @@
 package ac.simons.oembed;
 
 import java.net.URI;
-import java.util.Optional;;
+import java.util.Optional;
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
