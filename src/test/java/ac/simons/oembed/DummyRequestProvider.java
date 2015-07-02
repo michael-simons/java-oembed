@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2015 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,19 @@
  */
 package ac.simons.oembed;
 
+import java.net.URI;
+import java.util.Optional;
+import org.apache.http.client.methods.HttpGet;
+
 /**
- * An exception for wrapping any checked exception that might happens due
- * parsing of responses etc.
+ * Only needed for tests
  *
- * @author Michael J. Simons, 2010-12-24
+ * @author Michael J. Simons, 2015-07-02
  */
-public class OembedException extends RuntimeException {
+public class DummyRequestProvider implements RequestProvider {
 
-    private static final long serialVersionUID = 7542551145054543755L;
-
-    public OembedException(Throwable cause) {
-	super(cause.getMessage(), cause);
-    }
-
-    public OembedException(String message) {
-	super(message);
+    @Override
+    public HttpGet createRequestFor(String userAgent, Optional<String> applicationName, URI uri) {
+	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

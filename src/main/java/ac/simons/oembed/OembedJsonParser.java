@@ -1,91 +1,69 @@
-/**
- * Created by Michael Simons, michael-simons.eu
- * and released under The BSD License
- * http://www.opensource.org/licenses/bsd-license.php
+/*
+ * Copyright 2014 michael-simons.eu.
  *
- * Copyright (c) 2010, Michael Simons
- * All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Redistribution  and  use  in  source   and  binary  forms,  with  or   without
- * modification, are permitted provided that the following conditions are met:
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * * Redistributions of source   code must retain   the above copyright   notice,
- *   this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary  form must reproduce  the above copyright  notice,
- *   this list of conditions  and the following  disclaimer in the  documentation
- *   and/or other materials provided with the distribution.
- *
- * * Neither the name  of  michael-simons.eu   nor the names  of its contributors
- *   may be used  to endorse   or promote  products derived  from  this  software
- *   without specific prior written permission.
- *
- * THIS SOFTWARE IS  PROVIDED BY THE  COPYRIGHT HOLDERS AND  CONTRIBUTORS "AS IS"
- * AND ANY  EXPRESS OR  IMPLIED WARRANTIES,  INCLUDING, BUT  NOT LIMITED  TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL  THE COPYRIGHT HOLDER OR CONTRIBUTORS  BE LIABLE
- * FOR ANY  DIRECT, INDIRECT,  INCIDENTAL, SPECIAL,  EXEMPLARY, OR  CONSEQUENTIAL
- * DAMAGES (INCLUDING,  BUT NOT  LIMITED TO,  PROCUREMENT OF  SUBSTITUTE GOODS OR
- * SERVICES; LOSS  OF USE,  DATA, OR  PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package ac.simons.oembed;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
-
 /**
- * @author Michael J. Simons
+ * Provides JSON Parsing for {@link OembedResponse}s. This class uses a private
+ * {@link ObjectMapper} to ensure that the JAXB annotation introspector is
+ * configured correctly.
+ *
+ * @author Michael J. Simons, 2010-12-24
  */
 public class OembedJsonParser implements OembedParser {
-	private final ObjectMapper objectMapper;
-	
-	public OembedJsonParser() {
-		this.objectMapper = new ObjectMapper()
-			.setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()))
-			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-			;
-	}
-	
-	/**
-	 * Hook to provide a custom object mapper with custom serializer / deserializer
-	 * @param objectMapper
-	 */
-	public OembedJsonParser(final ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
-	
-	@Override
-	public OembedResponse unmarshal(InputStream httpResponse) throws OembedException {
-		try {			
-			return objectMapper.readValue(httpResponse, OembedResponse.class);
-		} catch(Exception e) {
-			throw new OembedException(e);
-		}
-	}
 
-	@Override
-	public String marshal(OembedResponse oembedResponse) throws OembedException {
-		try {
-			return objectMapper.writeValueAsString(oembedResponse);
-		} catch (Exception e) {
-			throw new OembedException(e);
-		}
-	}
+    /**
+     * Private instance of an object mapper with JaxbAnnotationIntrospector
+     * configured.
+     */
+    private final ObjectMapper objectMapper;
 
-	@Override
-	public void marshal(OembedResponse oembedResponse, OutputStream outputStream) throws OembedException {
-		try {
-			this.objectMapper.writeValue(outputStream, oembedResponse);
-		} catch (Exception e) {
-			throw new OembedException(e);
-		}
+    /**
+     * Creates a new OembedJsonParser.
+     */
+    public OembedJsonParser() {
+	this.objectMapper = new ObjectMapper()
+		.setAnnotationIntrospector(new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())))		
+		.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
+
+    @Override
+    public OembedResponse unmarshal(InputStream in) {
+	try {
+	    return objectMapper.readValue(in, OembedResponse.class);
+	} catch (IOException ex) {
+	    throw new OembedException(ex);
 	}
+    }
+
+    @Override
+    public void marshal(OembedResponse oembedResponse, OutputStream out) {
+	try {
+	    this.objectMapper.writeValue(out, oembedResponse);
+	} catch (IOException ex) {
+	    throw new OembedException(ex);
+	}
+    }
 }
