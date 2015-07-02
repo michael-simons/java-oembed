@@ -128,17 +128,17 @@ and achieving the same result as in the stand alone version through the followin
 <pre><code>
 
 # A flag wether autodiscovery of oembed endpoints should be tried. Defaults to false.
-# dailyfratze.oembed.autodiscovery =
+# some-app.oembed.autodiscovery =
 
 # The name of the cached used by this service. Defaults to "de.dailyfratze.text.oembed.OembedService.OembedService".
-# dailyfratze.oembed.cacheName
+# some-app.oembed.cacheName
 
 # Time in seconds responses are cached. Used if the response has no cache_age, defaults to 3600 (one hour).
-# dailyfratze.oembed.defaultCacheAge =
+# some-app.oembed.defaultCacheAge =
 
-dailyfratze.oembed.endpoints[0].name = youtube
-dailyfratze.oembed.endpoints[0].endpoint = https://www.youtube.com/oembed
-dailyfratze.oembed.endpoints[0].maxWidth = 480
-dailyfratze.oembed.endpoints[0].urlSchemes[0] = https?://(www|de)\\.youtube\\.com/watch\\?v=.*
-# dailyfratze.oembed.endpoints[0].responseRendererClass = de.dailyfratze.text.oembed.YoutubeRenderer
+some-app.oembed.endpoints[0].name = youtube
+some-app.oembed.endpoints[0].endpoint = https://www.youtube.com/oembed
+some-app.oembed.endpoints[0].maxWidth = 480
+some-app.oembed.endpoints[0].urlSchemes[0] = https?://(www|de)\\.youtube\\.com/watch\\?v=.*
+# some-app.oembed.endpoints[0].responseRendererClass = de.dailyfratze.text.oembed.YoutubeRenderer
 </code></pre>
