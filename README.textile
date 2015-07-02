@@ -110,7 +110,7 @@ public class OembedConfig {
     
     @Bean
     public OembedService oembedService(HttpClient httpClient, CacheManager cacheManager) {
-	final OembedService oembedService = new OembedService(httpClient, cacheManager, endpoints, "dailyfratze");	
+	final OembedService oembedService = new OembedService(httpClient, cacheManager, endpoints, "some-app");	
 	oembedService.setAutodiscovery(this.autodiscovery);
 	if(this.cacheName != null) {
 	    oembedService.setCacheName(cacheName);
@@ -130,7 +130,7 @@ and achieving the same result as in the stand alone version through the followin
 # A flag wether autodiscovery of oembed endpoints should be tried. Defaults to false.
 # some-app.oembed.autodiscovery =
 
-# The name of the cached used by this service. Defaults to "de.dailyfratze.text.oembed.OembedService.OembedService".
+# The name of the cached used by this service. Defaults to "ac.simons.oembed.OembedService".
 # some-app.oembed.cacheName
 
 # Time in seconds responses are cached. Used if the response has no cache_age, defaults to 3600 (one hour).
