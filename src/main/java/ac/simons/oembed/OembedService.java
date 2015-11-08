@@ -18,7 +18,6 @@ package ac.simons.oembed;
 import ac.simons.oembed.OembedResponse.Format;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -33,12 +32,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.joor.Reflect;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -147,32 +146,19 @@ public class OembedService {
 	this.endpoints = endpoints.stream().collect(Collectors.toMap(Function.identity(), endpoint -> {
 	    logger.debug("Endpoint {} will match the following patterns: {}", endpoint.getName(), endpoint.getUrlSchemes());
 	    logger.debug("Configuring request provider of type {} for endpoint {}...", endpoint.getRequestProviderClass(), endpoint.getName());
-	    logger.debug("Using properties: {}", endpoint.getRequestProviderProperties());
-
-	    RequestProvider requestProvider = null;
-	    try {
-		requestProvider = endpoint.getRequestProviderClass().newInstance();
-		BeanUtils.populate(requestProvider, endpoint.getRequestProviderProperties());
-	    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-		// Assuming everything is neatly configured
-		throw new RuntimeException(ex);
-	    }
-	    return requestProvider;
+	    logger.debug("Using properties: {}", endpoint.getRequestProviderProperties());	    
+	    final Reflect requestProvider = Reflect.on(endpoint.getRequestProviderClass()).create();	    
+	    Optional.ofNullable(endpoint.getRequestProviderProperties()).ifPresent(p -> p.forEach((k, v) -> requestProvider.call(k, v)));
+	    return requestProvider.<RequestProvider>get();	
 	}));
 
 	this.renderers = endpoints.stream().collect(Collectors.toMap(OembedEndpoint::getUrlSchemes, endpoint -> {
 	    logger.debug("Configuring response renderer of type {} for endpoint {}...", endpoint.getResponseRendererClass(), endpoint.getName());
 	    logger.debug("Using properties: {}", endpoint.getResponseRendererProperties());
 
-	    OembedResponseRenderer oembedResponseRenderer = null;
-	    try {
-		oembedResponseRenderer = endpoint.getResponseRendererClass().newInstance();
-		BeanUtils.populate(oembedResponseRenderer, endpoint.getResponseRendererProperties());
-	    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
-		// Assuming everything is neatly configured
-		throw new RuntimeException(ex);
-	    }
-	    return oembedResponseRenderer;
+	    final Reflect oembedResponseRenderer = Reflect.on(endpoint.getResponseRendererClass()).create();
+	    Optional.ofNullable(endpoint.getResponseRendererProperties()).ifPresent(p -> p.forEach((k, v) -> oembedResponseRenderer.set(k, v)));
+	    return oembedResponseRenderer.get();	    
 	}));
 
 	logger.debug("Oembed has {} endpoints and autodiscovery {} enabled...", this.endpoints.size(), this.autodiscovery ? "is" : "is not");
