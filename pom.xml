@@ -296,9 +296,9 @@
 	    <version>4.4.4</version>
 	</dependency>
 	<dependency>
-	    <groupId>org.jooq</groupId>
-	    <artifactId>joor</artifactId>
-	    <version>0.9.5</version>
+	    <groupId>commons-beanutils</groupId>
+	    <artifactId>commons-beanutils</artifactId>
+	    <version>1.9.2</version>
 	</dependency>
 	<dependency>
 	    <groupId>junit</groupId>
