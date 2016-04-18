@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2016 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -361,9 +361,9 @@ public class OembedService {
     
     /**
      * @see #embedUrls(java.lang.String, java.util.Optional, java.lang.Class) 
-     * @param textWithEmbeddableUrls
-     * @param baseUrl
-     * @return 
+     * @param textWithEmbeddableUrls Text that may contain links
+     * @param baseUrl Base url for constructing absolute links
+     * @return A string with urls embedded
      */
     public String embedUrls(final String textWithEmbeddableUrls, final Optional<String> baseUrl) {
 	return embedUrls(textWithEmbeddableUrls, baseUrl, String.class);
@@ -379,7 +379,7 @@ public class OembedService {
      * @param <T> Type of the resulting document with embedded links
      * @param textWithEmbeddableUrls Text that contains embeddable urls
      * @param baseUrl An optional base url for resolving relative urls
-     * @param targetClass
+     * @param targetClass The concrete classe for the document node
      * @return The same text with embedded urls if such urls existed
      */
     public <T> T embedUrls(final String textWithEmbeddableUrls, final Optional<String> baseUrl, Class<? extends T> targetClass) {
