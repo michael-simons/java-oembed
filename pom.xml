@@ -22,7 +22,8 @@
     </licenses>
 		
     <properties>		
-	<versions.jackson>2.6.3</versions.jackson>		
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<versions.jackson>2.7.3</versions.jackson>			
     </properties>
     <build>
 	<plugins>
@@ -42,7 +43,8 @@
 		<configuration>
 		    <target>1.8</target>
 		    <source>1.8</source>
-		    <encoding>UTF-8</encoding>
+		    <encoding>${project.build.sourceEncoding}</encoding>
+		    <showDeprecation>true</showDeprecation>
 		</configuration>
 	    </plugin>
 	    <plugin>
@@ -104,7 +106,7 @@
 	    <plugin>
 		<groupId>org.jacoco</groupId>
 		<artifactId>jacoco-maven-plugin</artifactId>
-		<version>0.7.2.201409121644</version>
+		<version>0.7.6.201602180812</version>
 		<executions>
 		    <execution>
 			<id>pre-unit-test</id>
@@ -287,6 +289,10 @@
 	    <exclusions>
 		<exclusion>
 		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		</exclusion>
+		<exclusion>
+		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
 		</exclusion>
 	    </exclusions>
@@ -294,12 +300,12 @@
 	<dependency>
 	    <groupId>org.jsoup</groupId>
 	    <artifactId>jsoup</artifactId>
-	    <version>1.8.3</version>
+	    <version>1.9.1</version>
 	</dependency>
 	<dependency>
 	    <groupId>org.apache.httpcomponents</groupId>
 	    <artifactId>httpclient</artifactId>
-	    <version>4.5.1</version>
+	    <version>4.5.2</version>
 	    <exclusions>
 		<exclusion>
 		    <groupId>commons-logging</groupId>
