@@ -312,7 +312,7 @@ public class OembedService {
      * @param url The URL that might be represented by oembed.
      * @return An oembed response
      */
-    Optional<OembedResponse> getOembedResponseFor(final String url) {
+    public Optional<OembedResponse> getOembedResponseFor(final String url) {
 	String trimmedUrl;
 	if (url == null || (trimmedUrl = url.trim()).isEmpty()) {
 	    logger.debug("Ignoring empty url...");
