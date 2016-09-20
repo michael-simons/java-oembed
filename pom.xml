@@ -23,7 +23,7 @@
 		
     <properties>		
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<versions.jackson>2.8.1</versions.jackson>			
+	<versions.jackson>2.8.3</versions.jackson>			
     </properties>
     <build>
 	<plugins>
