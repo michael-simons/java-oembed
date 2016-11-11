@@ -23,7 +23,7 @@
 		
     <properties>		
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<versions.jackson>2.8.3</versions.jackson>			
+	<versions.jackson>2.8.4</versions.jackson>			
     </properties>
     <build>
 	<plugins>
@@ -257,7 +257,7 @@
 	<dependency>
 	    <groupId>org.jsoup</groupId>
 	    <artifactId>jsoup</artifactId>
-	    <version>1.9.2</version>
+	    <version>1.10.1</version>
 	</dependency>
 	<dependency>
 	    <groupId>org.apache.httpcomponents</groupId>
@@ -282,7 +282,7 @@
 	<dependency>
 	    <groupId>commons-beanutils</groupId>
 	    <artifactId>commons-beanutils</artifactId>
-	    <version>1.9.2</version>
+	    <version>1.9.3</version>
 	</dependency>
 	<dependency>
 	    <groupId>junit</groupId>
