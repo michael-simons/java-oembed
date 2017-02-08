@@ -24,7 +24,7 @@ java-oembed is available in the Central Repository (since 0.2.10):
 <dependency>
     <groupId>eu.michael-simons</groupId>
     <artifactId>java-oembed</artifactId>
-    <version>0.4.1</version>
+    <version>0.5.8</version>
 </dependency>
 </code></pre>	
 
