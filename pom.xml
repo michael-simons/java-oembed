@@ -18,7 +18,7 @@
   </licenses>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <versions.jackson>2.8.4</versions.jackson>
+    <versions.jackson>2.8.6</versions.jackson>
   </properties>
   <build>
     <plugins>
