@@ -1,6 +1,6 @@
 h1. Simple oembed implementation for Java based on Apache HttpClient
 
-!https://travis-ci.org/michael-simons/java-oembed.svg?branch=master!:https://travis-ci.org/michael-simons/java-oembed !https://maven-badges.herokuapp.com/maven-central/eu.michael-simons/java-oembed/badge.svg(Maven Central)!:https://maven-badges.herokuapp.com/maven-central/eu.michael-simons/java-oembed
+!https://travis-ci.org/michael-simons/java-oembed.svg?branch=master!:https://travis-ci.org/michael-simons/java-oembed !https://sonarqube.com/api/badges/measure?key=eu.michael-simons:java-oembed&metric=coverage(Test coverage)!:https://sonarqube.com/dashboard/index/eu.michael-simons:java-oembed !https://sonarqube.com/api/badges/gate?key=eu.michael-simons:java-oembed&metric=coverage(Quality Gate)!:https://sonarqube.com/dashboard/index/eu.michael-simons:java-oembed !https://maven-badges.herokuapp.com/maven-central/eu.michael-simons/java-oembed/badge.svg(Maven Central)!:https://maven-badges.herokuapp.com/maven-central/eu.michael-simons/java-oembed
 
 This is a very simple Java client for consuming "Oembed":http://www.oembed.com/ enabled sites.
 
