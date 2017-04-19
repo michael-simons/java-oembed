@@ -73,12 +73,12 @@ public class OembedEndpointTest {
     public void toApiUrlShouldWork() {
 	OembedEndpoint oembedEndpoint = new OembedEndpoint();
 
-	oembedEndpoint.setEndpoint("http://biking.michael-simons.eu/oembed");
+	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setFormat(Format.json);
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
 
-	Assert.assertEquals("http://biking.michael-simons.eu/oembed?format=json&url=http%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", oembedEndpoint.toApiUrl("http://biking.michael-simons.eu/tracks/1").toString());
+	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", oembedEndpoint.toApiUrl("https://biking.michael-simons.eu/tracks/1").toString());
 
 	oembedEndpoint.setEndpoint("https://api.twitter.com/1.1/statuses/oembed.%{format}");
 	oembedEndpoint.setFormat(Format.json);

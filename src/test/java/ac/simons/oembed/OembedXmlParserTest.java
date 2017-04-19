@@ -35,14 +35,14 @@ public class OembedXmlParserTest {
 
     @Test
     public void unmarshallingShouldWork() throws IOException {
-	final String responseString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><oembed><type>rich</type><version>1.0</version><title>Aachen - Maastricht - Aachen</title><author_name>Michael J. Simons</author_name><author_url>http://michael-simons.eu</author_url><provider_name>biking2</provider_name><provider_url>http://biking.michael-simons.eu</provider_url><cache_age>86400</cache_age><html>&lt;iframe width='1024' height='576' src='http://biking.michael-simons.eu/tracks/1/embed?width=1024&amp;height=576' class='bikingTrack'&gt;&lt;/iframe&gt;</html></oembed>";
+	final String responseString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><oembed><type>rich</type><version>1.0</version><title>Aachen - Maastricht - Aachen</title><author_name>Michael J. Simons</author_name><author_url>http://michael-simons.eu</author_url><provider_name>biking2</provider_name><provider_url>https://biking.michael-simons.eu</provider_url><cache_age>86400</cache_age><html>&lt;iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&amp;height=576' class='bikingTrack'&gt;&lt;/iframe&gt;</html></oembed>";
 	final OembedResponse response = new OembedXmlParser().unmarshal(new ByteArrayInputStream(responseString.getBytes()));
 	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
 	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
 	Assert.assertEquals(new Long(86400l), response.getCacheAge());
-	Assert.assertEquals("<iframe width='1024' height='576' src='http://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
+	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
 	Assert.assertEquals("biking2", response.getProviderName());
-	Assert.assertEquals("http://biking.michael-simons.eu", response.getProviderUrl());
+	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
 	Assert.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
 	Assert.assertEquals("rich", response.getType());
 	Assert.assertEquals("1.0", response.getVersion());

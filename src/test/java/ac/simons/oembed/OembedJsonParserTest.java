@@ -35,14 +35,14 @@ public class OembedJsonParserTest {
 
     @Test
     public void unmarshallingShouldWork() throws IOException {
-	final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='http://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"http://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";	
+	final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";	
 	final OembedResponse response = new OembedJsonParser().unmarshal(new ByteArrayInputStream(responseString.getBytes()));
 	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
 	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
 	Assert.assertEquals(new Long(86400l), response.getCacheAge());
-	Assert.assertEquals("<iframe width='1024' height='576' src='http://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
+	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
 	Assert.assertEquals("biking2", response.getProviderName());
-	Assert.assertEquals("http://biking.michael-simons.eu", response.getProviderUrl());
+	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
 	Assert.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
 	Assert.assertEquals("rich", response.getType());
 	Assert.assertEquals("1.0", response.getVersion());

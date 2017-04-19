@@ -62,7 +62,7 @@ public class OembedServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='http://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"http://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";
+    private final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";
     private final OembedResponse response1;
 
     public OembedServiceTest() throws IOException {
@@ -261,7 +261,7 @@ public class OembedServiceTest {
     @Test
     public void getOembedResponseForShouldWork2() {	
 	Ehcache cache = Mockito.mock(Ehcache.class);
-	String embeddableUrl = "http://biking.michael-simons.eu/tracks/1";
+	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 	when(cache.get(embeddableUrl)).thenReturn(new Element(embeddableUrl, response1));
 	when(cacheManager.addCacheIfAbsent("testCache")).thenReturn(cache);
 
@@ -275,9 +275,9 @@ public class OembedServiceTest {
 	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
 	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
 	Assert.assertEquals(new Long(86400l), response.getCacheAge());
-	Assert.assertEquals("<iframe width='1024' height='576' src='http://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
+	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
 	Assert.assertEquals("biking2", response.getProviderName());
-	Assert.assertEquals("http://biking.michael-simons.eu", response.getProviderUrl());
+	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
 	Assert.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
 	Assert.assertEquals("rich", response.getType());
 	Assert.assertEquals("1.0", response.getVersion());
@@ -296,14 +296,14 @@ public class OembedServiceTest {
      */
     @Test
     public void getOembedResponseForShouldWork3() throws IOException {
-	String embeddableUrl = "http://biking.michael-simons.eu/tracks/1";
+	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 	
 	OembedEndpoint oembedEndpoint = new OembedEndpoint();
 	oembedEndpoint.setName("biking");
-	oembedEndpoint.setEndpoint("http://biking.michael-simons.eu/oembed");
+	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
-	oembedEndpoint.setUrlSchemes(Arrays.asList("http://biking\\.michael-simons\\.eu/tracks/.*"));
+	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
 	
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(200);
@@ -321,7 +321,7 @@ public class OembedServiceTest {
 	Assert.assertFalse(oembedService.getOembedResponseFor(embeddableUrl).isPresent());	
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("http://biking.michael-simons.eu/oembed?format=json&url=http%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());	
+	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());	
 	
 	verify(cacheManager, times(2)).addCacheIfAbsent("testCache");
 	verify(cacheManager).cacheExists(OembedService.class.getName());	
@@ -337,14 +337,14 @@ public class OembedServiceTest {
      */
     @Test
     public void getOembedResponseForShouldWork4() throws IOException {
-	String embeddableUrl = "http://biking.michael-simons.eu/tracks/1";
+	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 	
 	OembedEndpoint oembedEndpoint = new OembedEndpoint();
 	oembedEndpoint.setName("biking");
-	oembedEndpoint.setEndpoint("http://biking.michael-simons.eu/oembed");
+	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
-	oembedEndpoint.setUrlSchemes(Arrays.asList("http://biking\\.michael-simons\\.eu/tracks/.*"));
+	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
 	
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(200);
@@ -362,7 +362,7 @@ public class OembedServiceTest {
 	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());	
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("http://biking.michael-simons.eu/oembed?format=json&url=http%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());	
+	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());	
 	
 	verify(cacheManager, times(2)).addCacheIfAbsent("testCache");
 	verify(cacheManager).cacheExists(OembedService.class.getName());	
@@ -426,15 +426,15 @@ public class OembedServiceTest {
     @Test
     public void embedUrlsShouldWork2() {
 	Ehcache cache = Mockito.mock(Ehcache.class);
-	String embeddableUrl = "http://biking.michael-simons.eu/tracks/1";
+	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 	when(cache.get(embeddableUrl)).thenReturn(new Element(embeddableUrl, response1));
 	when(cacheManager.addCacheIfAbsent("testCache")).thenReturn(cache);
 
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
 	oembedService.setCacheName("testCache");
 	
-	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"http://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>.</p>";
-	String expected = "<p>Vor langer Zeit fuhr ich diesen Weg: <iframe width=\"1024\" height=\"576\" src=\"http://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576\" class=\"bikingTrack\"></iframe>.</p>";
+	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"https://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>.</p>";
+	String expected = "<p>Vor langer Zeit fuhr ich diesen Weg: <iframe width=\"1024\" height=\"576\" src=\"https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576\" class=\"bikingTrack\"></iframe>.</p>";
 	
 	Assert.assertEquals(expected, oembedService.embedUrls(in, Optional.empty()));
     }
@@ -448,22 +448,22 @@ public class OembedServiceTest {
     @Test
     public void embedUrlsShouldWork3() {
 	Ehcache cache = Mockito.mock(Ehcache.class);
-	String embeddableUrl = "http://biking.michael-simons.eu/tracks/1";
+	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 	when(cache.get(embeddableUrl)).thenReturn(new Element(embeddableUrl, response1));
 	when(cacheManager.addCacheIfAbsent("testCache")).thenReturn(cache);
 
 	OembedEndpoint oembedEndpoint = new OembedEndpoint();
 	oembedEndpoint.setName("biking");
-	oembedEndpoint.setEndpoint("http://biking.michael-simons.eu/oembed");
+	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
-	oembedEndpoint.setUrlSchemes(Arrays.asList("http://biking\\.michael-simons\\.eu/tracks/.*"));
+	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
 	oembedEndpoint.setResponseRendererClass(BrokenRenderer.class);
 		
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, Arrays.asList(oembedEndpoint), null);
 	oembedService.setCacheName("testCache");
 	
-	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"http://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>. Hier der Bericht: <a href=\"http://test.com\">Bericht</a>.</p>";
+	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"https://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>. Hier der Bericht: <a href=\"http://test.com\">Bericht</a>.</p>";
 	String expected = in;
 	
 	Assert.assertEquals(expected, oembedService.embedUrls(in, Optional.empty()));
