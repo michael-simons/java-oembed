@@ -24,7 +24,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -353,7 +352,7 @@ public class OembedService {
 	    final int cacheAge = (int) Math.min(Math.max(60l, rv.map(OembedResponse::getCacheAge).orElse(this.defaultCacheAge)), Integer.MAX_VALUE);
 	    // We're adding failed urls to the cache as well to prevent them
 	    // from being tried again over and over (at least for some seconds)
-	    cache.put(new net.sf.ehcache.Element(trimmedUrl, rv.orElse(null), null, null, cacheAge));
+	    cache.put(new net.sf.ehcache.Element(trimmedUrl, rv.orElse(null), cacheAge, cacheAge));
 	    logger.debug("Cached {} for {} seconds for url '{}'...", rv, cacheAge, trimmedUrl);
 	}
 
