@@ -15,6 +15,7 @@
   </licenses>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>10</java.version>
     <javax-jaxb.version>2.3.0</javax-jaxb.version>
     <javax-activation.version>1.1.1</javax-activation.version>
     <asm.version>6.1.1</asm.version>
@@ -39,8 +40,8 @@
           </dependency>
         </dependencies>
         <configuration>
-          <target>10</target>
-          <source>10</source>
+          <target>${java.version}</target>
+          <source>${java.version}</source>
           <encoding>${project.build.sourceEncoding}</encoding>
           <showDeprecation>true</showDeprecation>
         </configuration>
