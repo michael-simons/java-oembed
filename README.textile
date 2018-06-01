@@ -10,9 +10,15 @@ The core service of this project is the _OembedService_ which takes several endp
 
 java-oembed can be configured to use an "ehcache CacheManager instance":http://ehcache.org/.
 
+The project is a ready to use configured maven/eclipse project and works nice my "java-autolinker":https://github.com/michael-simons/java-autolinker.
+
+*Important*
+
 Since version 0.4.1 this project is Java 8 *only*. Upgrading from 0.3.x will break stuff. I've rewritten nearly everything from scratch, so have a look at the test code or the following small example. The project is now fully tested.
 
-The project is a ready to use configured maven/eclipse project and works nice my "java-autolinker":https://github.com/michael-simons/java-autolinker.
+Since version 0.6.1 this project is Java 10 *only*. In addition, it uses Spring Boots dependency management. Upgrading from 0.5.x will break stuff if you're not on JDK10 or higher.
+
+It is not yet on the module path because java-oembed uses JAXB for parsing XML which currently leads to a "split-package problem":https://github.com/javaee/jaxb-v2/issues/1168.
 
 h2. Usage
 

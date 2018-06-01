@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,13 +65,13 @@ public class OembedResponseTest {
 	Assert.assertEquals("authorUrl", oembedResponse.getAuthorUrl());
 	Assert.assertEquals("providerName", oembedResponse.getProviderName());
 	Assert.assertEquals("providerUrl", oembedResponse.getProviderUrl());
-	Assert.assertEquals(new Long(4711l), oembedResponse.getCacheAge());
+	Assert.assertEquals(Long.valueOf(4711l), oembedResponse.getCacheAge());
 	Assert.assertEquals("thumbnailUrl", oembedResponse.getThumbnailUrl());
-	Assert.assertEquals(new Integer(23), oembedResponse.getThumbnailWidth());
-	Assert.assertEquals(new Integer(42), oembedResponse.getThumbnailHeight());
+	Assert.assertEquals(Integer.valueOf(23), oembedResponse.getThumbnailWidth());
+	Assert.assertEquals(Integer.valueOf(42), oembedResponse.getThumbnailHeight());
 	Assert.assertEquals("url", oembedResponse.getUrl());
 	Assert.assertEquals("html", oembedResponse.getHtml());
-	Assert.assertEquals(new Integer(44), oembedResponse.getWidth());
-	Assert.assertEquals(new Integer(55), oembedResponse.getHeight());
+	Assert.assertEquals(Integer.valueOf(44), oembedResponse.getWidth());
+	Assert.assertEquals(Integer.valueOf(55), oembedResponse.getHeight());
     }
 }

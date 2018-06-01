@@ -151,9 +151,9 @@ public class OembedService {
 
 	    RequestProvider requestProvider = null;
 	    try {
-		requestProvider = endpoint.getRequestProviderClass().newInstance();
+		requestProvider = endpoint.getRequestProviderClass().getDeclaredConstructor().newInstance();
 		BeanUtils.populate(requestProvider, endpoint.getRequestProviderProperties());
-	    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
+	    } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException ex) {
 		// Assuming everything is neatly configured
 		throw new OembedException(ex);
 	    }
@@ -166,9 +166,9 @@ public class OembedService {
 
 	    OembedResponseRenderer oembedResponseRenderer = null;
 	    try {
-		oembedResponseRenderer = endpoint.getResponseRendererClass().newInstance();
+		oembedResponseRenderer = endpoint.getResponseRendererClass().getDeclaredConstructor().newInstance();
 		BeanUtils.populate(oembedResponseRenderer, endpoint.getResponseRendererProperties());
-	    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
+	    } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | InstantiationException ex) {
 		// Assuming everything is neatly configured
 		throw new OembedException(ex);
 	    }

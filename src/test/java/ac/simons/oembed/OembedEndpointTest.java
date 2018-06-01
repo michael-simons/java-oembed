@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,8 @@ public class OembedEndpointTest {
 	Assert.assertEquals("name", oembedEndpoint.getName());
 	Assert.assertEquals("endpoint", oembedEndpoint.getEndpoint());
 	Assert.assertEquals(Format.xml, oembedEndpoint.getFormat());
-	Assert.assertEquals(new Integer(4711), oembedEndpoint.getMaxWidth());
-	Assert.assertEquals(new Integer(23), oembedEndpoint.getMaxHeight());
+	Assert.assertEquals(Integer.valueOf(4711), oembedEndpoint.getMaxWidth());
+	Assert.assertEquals(Integer.valueOf(23), oembedEndpoint.getMaxHeight());
 	Assert.assertEquals(new ArrayList<>(), oembedEndpoint.getUrlSchemes());
 	Assert.assertEquals(DummyRequestProvider.class, oembedEndpoint.getRequestProviderClass());
 	Assert.assertEquals(new HashMap<>(), oembedEndpoint.getRequestProviderProperties());

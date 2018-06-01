@@ -15,16 +15,20 @@
  */
 package ac.simons.oembed;
 
-import ac.simons.oembed.OembedResponse.Format;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -40,11 +44,10 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import ac.simons.oembed.OembedResponse.Format;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
 
 /**
  *
@@ -276,7 +279,7 @@ public class OembedServiceTest {
 	OembedResponse response = oembedResponse.get();
 	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
 	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
-	Assert.assertEquals(new Long(86400l), response.getCacheAge());
+	Assert.assertEquals(Long.valueOf(86400l), response.getCacheAge());
 	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
 	Assert.assertEquals("biking2", response.getProviderName());
 	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
@@ -305,7 +308,7 @@ public class OembedServiceTest {
 	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
-	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
+	oembedEndpoint.setUrlSchemes(List.of("https://biking\\.michael-simons\\.eu/tracks/.*"));
 	
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(200);

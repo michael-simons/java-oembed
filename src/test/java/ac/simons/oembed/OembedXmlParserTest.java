@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class OembedXmlParserTest {
 	final OembedResponse response = new OembedXmlParser().unmarshal(new ByteArrayInputStream(responseString.getBytes()));
 	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
 	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
-	Assert.assertEquals(new Long(86400l), response.getCacheAge());
+	Assert.assertEquals(Long.valueOf(86400l), response.getCacheAge());
 	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
 	Assert.assertEquals("biking2", response.getProviderName());
 	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
