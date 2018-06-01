@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 michael-simons.eu.
+ * Copyright 2015-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,7 @@ public class OembedServiceTest {
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(404);
 	when(r.getEntity().getContent()).thenReturn(null);
+        when(r.getEntity().getContentType()).thenReturn(null);
 
 	when(defaultHttpClient.execute(any(HttpGet.class))).thenReturn(r);
 
@@ -199,6 +200,7 @@ public class OembedServiceTest {
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(404);
 	when(r.getEntity().getContent()).thenReturn(null);
+        when(r.getEntity().getContentType()).thenReturn(null);
 
 	when(defaultHttpClient.execute(request)).thenReturn(r);
 
@@ -391,8 +393,8 @@ public class OembedServiceTest {
 
 	when(defaultHttpClient.execute(any(HttpGet.class))).thenAnswer(new Answer() {
 	    @Override
-	    public Object answer(InvocationOnMock invocation) {
-		final String url = invocation.getArgumentAt(0, HttpGet.class).getURI().toString();
+	    public Object answer(InvocationOnMock invocation) {                
+		final String url = invocation.<HttpGet>getArgument(0).getURI().toString();
 		HttpResponse rv = null;
 		if(embeddableUrl.equals(url)) {
 		    rv = r1;
