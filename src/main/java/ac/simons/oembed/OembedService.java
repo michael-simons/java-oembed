@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,7 +140,7 @@ public class OembedService {
 	this.userAgent = String.format("Java/%s java-oembed2/%s", System.getProperty("java.version"), version.getProperty("de.dailyfratze.text.oembed.version"));
 	this.applicationName = Optional.ofNullable(applicationName);
 
-	final Map<Format, OembedParser> hlp = new HashMap<>();
+	final Map<Format, OembedParser> hlp = new EnumMap<>(Format.class);
 	hlp.put(Format.json, new OembedJsonParser());
 	hlp.put(Format.xml, new OembedXmlParser());
 	this.parsers = Collections.unmodifiableMap(hlp);
@@ -155,7 +156,7 @@ public class OembedService {
 		BeanUtils.populate(requestProvider, endpoint.getRequestProviderProperties());
 	    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
 		// Assuming everything is neatly configured
-		throw new RuntimeException(ex);
+		throw new OembedException(ex);
 	    }
 	    return requestProvider;
 	}));
@@ -170,7 +171,7 @@ public class OembedService {
 		BeanUtils.populate(oembedResponseRenderer, endpoint.getResponseRendererProperties());
 	    } catch (IllegalAccessException | InvocationTargetException | InstantiationException ex) {
 		// Assuming everything is neatly configured
-		throw new RuntimeException(ex);
+		throw new OembedException(ex);
 	    }
 	    return oembedResponseRenderer;
 	}));
@@ -209,7 +210,7 @@ public class OembedService {
      *
      * @param cacheName The new cache name
      */
-    public void setCacheName(String cacheName) {
+    public void setCacheName(final String cacheName) {
 	if (this.cacheManager.isPresent() && this.cacheManager.get().cacheExists(this.cacheName)) {
 	    this.cacheManager.get().removeCache(this.cacheName);
 	}
@@ -228,7 +229,7 @@ public class OembedService {
      *
      * @param defaultCacheAge New default cache age in seconds
      */
-    public void setDefaultCacheAge(long defaultCacheAge) {
+    public void setDefaultCacheAge(final long defaultCacheAge) {
 	this.defaultCacheAge = defaultCacheAge;
     }
 
