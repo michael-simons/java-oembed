@@ -18,6 +18,8 @@ Since version 0.4.1 this project is Java 8 *only*. Upgrading from 0.3.x will bre
 
 Since version 0.6.1 this project is Java 10 *only*. In addition, it uses Spring Boots dependency management. Upgrading from 0.5.x will break stuff if you're not on JDK10 or higher.
 
+Since version 0.7.1 I have changed the API of _OembedService_ and removed _Optional<>_ as input parameter as suggested by various people (Joshua Bloch, Simon Harrer and others).
+
 It is not yet on the module path because java-oembed uses JAXB for parsing XML which currently leads to a "split-package problem":https://github.com/javaee/jaxb-v2/issues/1168.
 
 h2. Usage
@@ -32,7 +34,7 @@ java-oembed is available in the Central Repository (since 0.2.10):
     <artifactId>java-oembed</artifactId>
     <version>0.5.8</version>
 </dependency>
-</code></pre>	
+</code></pre>
 
 h3. Standalone
 
@@ -50,7 +52,7 @@ public static void main(String... a) {
 	// Optional, specialised renderer, not included here
 	// endpoint.setResponseRendererClass(YoutubeRenderer.class);
 	endpoints.add(endpoint);
-		
+
 	final OembedService oembedService = new OembedService(new DefaultHttpClient(), null, endpoints, "some-app");
 	System.out.println(oembedService.embedUrls("Need some action... <a href=\"https://www.youtube.com/watch?v=dgL6ovr3DJM\">The Hoff!</a>", Optional.empty()));
     }
@@ -79,12 +81,12 @@ public class OembedConfig {
     private List<OembedEndpoint> endpoints;
 
     private boolean autodiscovery = false;
-    
+
     private String cacheName;
-    
+
     private Integer defaultCacheAge;
-    
-    public List<OembedEndpoint> getEndpoints() {	
+
+    public List<OembedEndpoint> getEndpoints() {
 	return endpoints;
     }
 
@@ -114,11 +116,11 @@ public class OembedConfig {
 
     public void setDefaultCacheAge(Integer defaultCacheAge) {
 	this.defaultCacheAge = defaultCacheAge;
-    }    
-    
+    }
+
     @Bean
     public OembedService oembedService(HttpClient httpClient, CacheManager cacheManager) {
-	final OembedService oembedService = new OembedService(httpClient, cacheManager, endpoints, "some-app");	
+	final OembedService oembedService = new OembedService(httpClient, cacheManager, endpoints, "some-app");
 	oembedService.setAutodiscovery(this.autodiscovery);
 	if(this.cacheName != null) {
 	    oembedService.setCacheName(cacheName);

@@ -358,14 +358,14 @@ public class OembedService {
 
 	return rv;
     }
-    
+
     /**
-     * @see #embedUrls(java.lang.String, java.util.Optional, java.lang.Class) 
+     * @see #embedUrls(java.lang.String, java.lang.String, java.lang.Class)
      * @param textWithEmbeddableUrls Text that may contain links
      * @param baseUrl Base url for constructing absolute links
      * @return A string with urls embedded
      */
-    public String embedUrls(final String textWithEmbeddableUrls, final Optional<String> baseUrl) {
+    public String embedUrls(final String textWithEmbeddableUrls, final String baseUrl) {
 	return embedUrls(textWithEmbeddableUrls, baseUrl, String.class);
     }
 
@@ -382,19 +382,20 @@ public class OembedService {
      * @param targetClass The concrete classe for the document node
      * @return The same text with embedded urls if such urls existed
      */
-    public <T> T embedUrls(final String textWithEmbeddableUrls, final Optional<String> baseUrl, Class<? extends T> targetClass) {
+    public <T> T embedUrls(final String textWithEmbeddableUrls, final String baseUrl, Class<? extends T> targetClass) {
+	var optionalBaseUrl = Optional.ofNullable(baseUrl);
 	T rv;
 	if (String.class.isAssignableFrom(targetClass)) {
 	    rv = (T) textWithEmbeddableUrls;
 	} else if (Document.class.isAssignableFrom(targetClass)) {
-	    rv = (T) Document.createShell(baseUrl.orElse(""));
+	    rv = (T) Document.createShell(optionalBaseUrl.orElse(""));
 	} else {
 	    throw new OembedException(String.format("Invalid target class: %s", targetClass.getName()));
 	}
 
 	if (!(textWithEmbeddableUrls == null || textWithEmbeddableUrls.trim().isEmpty())) {
 	    // Create a document
-	    final Document document = embedUrls(Jsoup.parseBodyFragment(textWithEmbeddableUrls, baseUrl.orElse("")));
+	    final Document document = embedUrls(Jsoup.parseBodyFragment(textWithEmbeddableUrls, optionalBaseUrl.orElse("")));
 	    if(Document.class.isAssignableFrom(targetClass)) {
 		rv = (T) document;
 	    } else {
@@ -412,7 +413,7 @@ public class OembedService {
     /**
      * A convenience method to embed urls in an existing document.
      *
-     * @see #embedUrls(java.lang.String, java.util.Optional, java.lang.Class) 
+     * @see #embedUrls(java.lang.String, java.lang.String, java.lang.Class)
      * @param document Existing document, will be modified
      * @return Modified document with embedded urls
      */

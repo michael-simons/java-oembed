@@ -61,7 +61,7 @@ public class OembedServiceTest {
 
     @Mock
     private CacheManager cacheManager;
-    
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -229,23 +229,23 @@ public class OembedServiceTest {
 	Assert.assertNotNull(oembedService.executeRequest(request));
 	verify(defaultHttpClient).execute(request);
     }
-    
+
     @Test
     public void setCacheNameShouldWork() {
 	when(cacheManager.cacheExists("x")).thenReturn(true);
-	
+
 	OembedService oembedService;
 	oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 	oembedService.setCacheName("x");
 	Assert.assertEquals("x", oembedService.getCacheName());
-	
+
 	oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
 	oembedService.setCacheName("x");
 	Assert.assertEquals("x", oembedService.getCacheName());
-	
+
 	oembedService.setCacheName("y");
 	Assert.assertEquals("y", oembedService.getCacheName());
-	
+
 	verify(cacheManager).cacheExists(OembedService.class.getName());
 	verify(cacheManager).cacheExists("x");
 	verify(cacheManager).removeCache("x");
@@ -264,7 +264,7 @@ public class OembedServiceTest {
      * Response from cache
      */
     @Test
-    public void getOembedResponseForShouldWork2() {	
+    public void getOembedResponseForShouldWork2() {
 	Ehcache cache = Mockito.mock(Ehcache.class);
 	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 	when(cache.get(embeddableUrl)).thenReturn(new Element(embeddableUrl, response1));
@@ -287,99 +287,99 @@ public class OembedServiceTest {
 	Assert.assertEquals("rich", response.getType());
 	Assert.assertEquals("1.0", response.getVersion());
 	Assert.assertEquals("testCache", oembedService.getCacheName());
-	
+
 	verify(cacheManager).addCacheIfAbsent("testCache");
-	verify(cacheManager).cacheExists(OembedService.class.getName());	
+	verify(cacheManager).cacheExists(OembedService.class.getName());
 	verify(cache).get(embeddableUrl);
 	Mockito.verifyNoMoreInteractions(cache, cacheManager);
 	Mockito.verifyZeroInteractions(defaultHttpClient);
     }
-    
+
     /**
      * Handle invalid content gracecully and also add to cache
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void getOembedResponseForShouldWork3() throws IOException {
 	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-	
+
 	OembedEndpoint oembedEndpoint = new OembedEndpoint();
 	oembedEndpoint.setName("biking");
 	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
 	oembedEndpoint.setUrlSchemes(List.of("https://biking\\.michael-simons\\.eu/tracks/.*"));
-	
+
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(200);
 	when(r.getEntity().getContentType()).thenReturn(null);
 	when(r.getEntity().getContent()).thenReturn(new ByteArrayInputStream("Hallo, Welt".getBytes()));
 
 	when(defaultHttpClient.execute(any(HttpGet.class))).thenReturn(r);
-	
-	Ehcache cache = Mockito.mock(Ehcache.class);	
+
+	Ehcache cache = Mockito.mock(Ehcache.class);
 	when(cache.get(embeddableUrl)).thenReturn(null);
 	when(cacheManager.addCacheIfAbsent("testCache")).thenReturn(cache);
-	
+
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, Arrays.asList(oembedEndpoint), null);
 	oembedService.setCacheName("testCache");
-	Assert.assertFalse(oembedService.getOembedResponseFor(embeddableUrl).isPresent());	
+	Assert.assertFalse(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());	
-	
+	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());
+
 	verify(cacheManager, times(2)).addCacheIfAbsent("testCache");
-	verify(cacheManager).cacheExists(OembedService.class.getName());	
+	verify(cacheManager).cacheExists(OembedService.class.getName());
 	verify(cache).get(embeddableUrl);
 	verify(cache).put(any(Element.class));
-	
-	verifyNoMoreInteractions(cache, cacheManager, defaultHttpClient);		
+
+	verifyNoMoreInteractions(cache, cacheManager, defaultHttpClient);
     }
-    
+
     /**
      * Embedding through configured endpoint including request provider
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void getOembedResponseForShouldWork4() throws IOException {
 	String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-	
+
 	OembedEndpoint oembedEndpoint = new OembedEndpoint();
 	oembedEndpoint.setName("biking");
 	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
 	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
-	
+
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(200);
 	when(r.getEntity().getContentType()).thenReturn(null);
 	when(r.getEntity().getContent()).thenReturn(new ByteArrayInputStream(responseString.getBytes()));
 
 	when(defaultHttpClient.execute(any(HttpGet.class))).thenReturn(r);
-	
-	Ehcache cache = Mockito.mock(Ehcache.class);	
+
+	Ehcache cache = Mockito.mock(Ehcache.class);
 	when(cache.get(embeddableUrl)).thenReturn(null);
 	when(cacheManager.addCacheIfAbsent("testCache")).thenReturn(cache);
-	
+
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, Arrays.asList(oembedEndpoint), null);
 	oembedService.setCacheName("testCache");
-	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());	
+	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());	
-	
+	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());
+
 	verify(cacheManager, times(2)).addCacheIfAbsent("testCache");
-	verify(cacheManager).cacheExists(OembedService.class.getName());	
+	verify(cacheManager).cacheExists(OembedService.class.getName());
 	verify(cache).get(embeddableUrl);
 	verify(cache).put(any(Element.class));
-	
-	verifyNoMoreInteractions(cache, cacheManager, defaultHttpClient);		
+
+	verifyNoMoreInteractions(cache, cacheManager, defaultHttpClient);
     }
-    
+
     /**
      * Embedding through auto discovered endpoint using default request provider
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void getOembedResponseForShouldWork5() throws IOException {
@@ -396,7 +396,7 @@ public class OembedServiceTest {
 
 	when(defaultHttpClient.execute(any(HttpGet.class))).thenAnswer(new Answer() {
 	    @Override
-	    public Object answer(InvocationOnMock invocation) {                
+	    public Object answer(InvocationOnMock invocation) {
 		final String url = invocation.<HttpGet>getArgument(0).getURI().toString();
 		HttpResponse rv = null;
 		if(embeddableUrl.equals(url)) {
@@ -407,24 +407,24 @@ public class OembedServiceTest {
 		return rv;
 	    }
 	});
-	
+
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 	oembedService.setAutodiscovery(true);
-		
-	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());	
-	verify(defaultHttpClient, times(2)).execute(any(HttpGet.class));	
-	verifyNoMoreInteractions(cacheManager, defaultHttpClient);		
+
+	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
+	verify(defaultHttpClient, times(2)).execute(any(HttpGet.class));
+	verifyNoMoreInteractions(cacheManager, defaultHttpClient);
     }
-    
+
     @Test
     public void embedUrlsShouldWork1() {
-	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);	
-	Assert.assertNull(oembedService.embedUrls(null, Optional.empty()));
-	Assert.assertEquals("", oembedService.embedUrls("", Optional.empty()));
-	Assert.assertEquals("	", oembedService.embedUrls("	", Optional.empty()));
-	Assert.assertEquals(" ", oembedService.embedUrls(" ", Optional.empty()));
+	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
+	Assert.assertNull(oembedService.embedUrls(null, null));
+	Assert.assertEquals("", oembedService.embedUrls("", null));
+	Assert.assertEquals("	", oembedService.embedUrls("	", null));
+	Assert.assertEquals(" ", oembedService.embedUrls(" ", null));
     }
-    
+
     /**
      * Get also the "orElse" branch in selecting the renderer as no endpoint is configured, also no renderes
      */
@@ -437,15 +437,15 @@ public class OembedServiceTest {
 
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
 	oembedService.setCacheName("testCache");
-	
+
 	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"https://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>.</p>";
 	String expected = "<p>Vor langer Zeit fuhr ich diesen Weg: <iframe width=\"1024\" height=\"576\" src=\"https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576\" class=\"bikingTrack\"></iframe>.</p>";
-	
-	Assert.assertEquals(expected, oembedService.embedUrls(in, Optional.empty()));
+
+	Assert.assertEquals(expected, oembedService.embedUrls(in, null));
     }
-    
+
     /**
-     * <ul> 
+     * <ul>
      * <li>Broken renderer</li>
      * <li>No oembed response for test.com</li>
      * </ul>
@@ -464,25 +464,25 @@ public class OembedServiceTest {
 	oembedEndpoint.setMaxHeight(360);
 	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
 	oembedEndpoint.setResponseRendererClass(BrokenRenderer.class);
-		
+
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, Arrays.asList(oembedEndpoint), null);
 	oembedService.setCacheName("testCache");
-	
+
 	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"https://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>. Hier der Bericht: <a href=\"http://test.com\">Bericht</a>.</p>";
 	String expected = in;
-	
-	Assert.assertEquals(expected, oembedService.embedUrls(in, Optional.empty()));
+
+	Assert.assertEquals(expected, oembedService.embedUrls(in, null));
     }
-    
+
     @Test
     public void embedUrlsShouldWork4() {
 	expectedException.expect(OembedException.class);
 	expectedException.expectMessage("Invalid target class: java.lang.Integer");
-	
-	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);	
-	oembedService.embedUrls(null, Optional.empty(), Integer.class);
+
+	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
+	oembedService.embedUrls(null, null, Integer.class);
     }
-    
+
     @Test
     public void misc() {
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
