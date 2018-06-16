@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 michael-simons.eu.
+ * Copyright 2015-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package ac.simons.oembed;
 
 import ac.simons.oembed.OembedResponse.Format;
+
 import java.net.URI;
 
 /**
@@ -24,25 +25,25 @@ import java.net.URI;
  *
  * @author Michael J. Simons, 2015-01-01
  */
-class AutodiscoveredOembedEndpoint extends OembedEndpoint {
+final class AutodiscoveredOembedEndpoint extends OembedEndpoint {
 
-    /**
-     * The autodiscovered api url
-     */
-    private final URI apiUrl;
+	/**
+	 * The autodiscovered api url
+	 */
+	private final URI apiUrl;
 
-    public AutodiscoveredOembedEndpoint(URI apiUrl, Format format) {
-	this.apiUrl = apiUrl;
-	super.setFormat(format);
-    }
+	AutodiscoveredOembedEndpoint(final URI apiUrl, final Format format) {
+		this.apiUrl = apiUrl;
+		super.setFormat(format);
+	}
 
-    @Override
-    public URI toApiUrl(String url) {
-	return this.apiUrl;
-    }
+	@Override
+	public URI toApiUrl(final String url) {
+		return this.apiUrl;
+	}
 
-    @Override
-    public void setFormat(Format format) {
-	// Cannot be changed
-    }
+	@Override
+	public void setFormat(final Format format) {
+		// Cannot be changed
+	}
 }

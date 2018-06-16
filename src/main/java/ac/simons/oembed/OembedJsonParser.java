@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,38 +33,38 @@ import java.io.OutputStream;
  *
  * @author Michael J. Simons, 2010-12-24
  */
-public class OembedJsonParser implements OembedParser {
+public final class OembedJsonParser implements OembedParser {
 
-    /**
-     * Private instance of an object mapper with JaxbAnnotationIntrospector
-     * configured.
-     */
-    private final ObjectMapper objectMapper;
+	/**
+	 * Private instance of an object mapper with JaxbAnnotationIntrospector
+	 * configured.
+	 */
+	private final ObjectMapper objectMapper;
 
-    /**
-     * Creates a new OembedJsonParser.
-     */
-    public OembedJsonParser() {
-	this.objectMapper = new ObjectMapper()
-		.setAnnotationIntrospector(new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())))		
-		.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    }
-
-    @Override
-    public OembedResponse unmarshal(InputStream in) {
-	try {
-	    return objectMapper.readValue(in, OembedResponse.class);
-	} catch (IOException ex) {
-	    throw new OembedException(ex);
+	/**
+	 * Creates a new OembedJsonParser.
+	 */
+	public OembedJsonParser() {
+		this.objectMapper = new ObjectMapper()
+			.setAnnotationIntrospector(new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())))
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
-    }
 
-    @Override
-    public void marshal(OembedResponse oembedResponse, OutputStream out) {
-	try {
-	    this.objectMapper.writeValue(out, oembedResponse);
-	} catch (IOException ex) {
-	    throw new OembedException(ex);
+	@Override
+	public OembedResponse unmarshal(final InputStream in) {
+		try {
+			return objectMapper.readValue(in, OembedResponse.class);
+		} catch (IOException ex) {
+			throw new OembedException(ex);
+		}
 	}
-    }
+
+	@Override
+	public void marshal(final OembedResponse oembedResponse, final OutputStream out) {
+		try {
+			this.objectMapper.writeValue(out, oembedResponse);
+		} catch (IOException ex) {
+			throw new OembedException(ex);
+		}
+	}
 }

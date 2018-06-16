@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ import org.jsoup.nodes.Element;
  */
 public interface OembedResponseRenderer {
 
-    /**
-     * Renderes the {@link OembedResponse} {@code response} into an html string.
-     * The original anchor is provided for giving more context information.
-     *
-     * @param response The response that should be handled
-     * @param originalAnchor The anchor that triggered the oembed request. This
-     * is a clone of the original object, changes will not be propagated.
-     * @return An html fragment containt the representation of the given
-     * OembedResponse
-     */
-    public String render(OembedResponse response, Element originalAnchor);
+	/**
+	 * Renderes the {@link OembedResponse} {@code response} into an html string.
+	 * The original anchor is provided for giving more context information.
+	 *
+	 * @param response       The response that should be handled
+	 * @param originalAnchor The anchor that triggered the oembed request. This
+	 *                       is a clone of the original object, changes will not be propagated.
+	 * @return An html fragment containt the representation of the given
+	 * OembedResponse
+	 */
+	String render(OembedResponse response, Element originalAnchor);
 }

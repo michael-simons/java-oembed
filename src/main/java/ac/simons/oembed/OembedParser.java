@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,20 +27,20 @@ import java.io.OutputStream;
  */
 public interface OembedParser {
 
-    /**
-     * Unmarshals an {@link OembedResponse} from the given inputstream
-     *
-     * @param in The inputstream to unmarshal
-     * @return A full OembedResponse
-     */
-    public OembedResponse unmarshal(final InputStream in);
+	/**
+	 * Unmarshals an {@link OembedResponse} from the given inputstream
+	 *
+	 * @param in The inputstream to unmarshal
+	 * @return A full OembedResponse
+	 */
+	OembedResponse unmarshal(InputStream in);
 
-    /**
-     * Marshals the given {@link OembedResponse} {@code oembedResponse} into the
-     * OutputStream {@code out}.
-     *
-     * @param oembedResponse The oembed response that should be written to the stream
-     * @param out The outputstream to write to
-     */
-    public void marshal(final OembedResponse oembedResponse, final OutputStream out);
+	/**
+	 * Marshals the given {@link OembedResponse} {@code oembedResponse} into the
+	 * OutputStream {@code out}.
+	 *
+	 * @param oembedResponse The oembed response that should be written to the stream
+	 * @param out            The outputstream to write to
+	 */
+	void marshal(OembedResponse oembedResponse, OutputStream out);
 }

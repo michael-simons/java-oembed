@@ -18,6 +18,7 @@ package ac.simons.oembed;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,234 +36,236 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OembedResponse implements Serializable {
+public final class OembedResponse implements Serializable {
 
-    /**
-     * Constants for supported oembed formats.
-     */
-    public static enum Format {json, xml}
-    
-    private static final long serialVersionUID = -2038373410581285921L;
+	/**
+	 * Constants for supported oembed formats.
+	 */
+	public enum Format {
+		json, xml
+	}
 
-    /**
-     * The resource type. Valid values, along with value-specific parameters,
-     * are described below.
-     */
-    @XmlElement(name = "type")
-    private String type;
+	private static final long serialVersionUID = -2038373410581285921L;
 
-    /**
-     * The oEmbed version number. This must be 1.0.
-     */
-    @XmlElement(name = "version")
-    private String version;
+	/**
+	 * The resource type. Valid values, along with value-specific parameters,
+	 * are described below.
+	 */
+	@XmlElement(name = "type")
+	private String type;
 
-    /**
-     * A text title, describing the resource.
-     */
-    @XmlElement(name = "title")
-    private String title;
+	/**
+	 * The oEmbed version number. This must be 1.0.
+	 */
+	@XmlElement(name = "version")
+	private String version;
 
-    /**
-     * The name of the author/owner of the resource.
-     */
-    @XmlElement(name = "author_name")
-    private String authorName;
+	/**
+	 * A text title, describing the resource.
+	 */
+	@XmlElement(name = "title")
+	private String title;
 
-    /**
-     * A URL for the author/owner of the resource.
-     */
-    @XmlElement(name = "author_url")
-    private String authorUrl;
+	/**
+	 * The name of the author/owner of the resource.
+	 */
+	@XmlElement(name = "author_name")
+	private String authorName;
 
-    /**
-     * The name of the resource provider.
-     */
-    @XmlElement(name = "provider_name")
-    private String providerName;
+	/**
+	 * A URL for the author/owner of the resource.
+	 */
+	@XmlElement(name = "author_url")
+	private String authorUrl;
 
-    /**
-     * The url of the resource provider.
-     */
-    @XmlElement(name = "provider_url")
-    private String providerUrl;
+	/**
+	 * The name of the resource provider.
+	 */
+	@XmlElement(name = "provider_name")
+	private String providerName;
 
-    /**
-     * The suggested cache lifetime for this resource, in seconds. Consumers may
-     * choose to use this value or not.
-     */
-    @XmlElement(name = "cache_age")
-    private Long cacheAge;
+	/**
+	 * The url of the resource provider.
+	 */
+	@XmlElement(name = "provider_url")
+	private String providerUrl;
 
-    /**
-     * A URL to a thumbnail image representing the resource. The thumbnail must
-     * respect any {@code maxwidth} and {@code maxheight} parameters. If this
-     * parameter is present, {@code thumbnail_width} and
-     * {@code thumbnail_height} must also be present.
-     */
-    @XmlElement(name = "thumbnail_url")
-    private String thumbnailUrl;
+	/**
+	 * The suggested cache lifetime for this resource, in seconds. Consumers may
+	 * choose to use this value or not.
+	 */
+	@XmlElement(name = "cache_age")
+	private Long cacheAge;
 
-    /**
-     * The width of the optional thumbnail. If this parameter is present,
-     * {@code thumbnail_url} and {@code thumbnail_height} must also be present.
-     */
-    @XmlElement(name = "thumbnail_width")
-    private Integer thumbnailWidth;
+	/**
+	 * A URL to a thumbnail image representing the resource. The thumbnail must
+	 * respect any {@code maxwidth} and {@code maxheight} parameters. If this
+	 * parameter is present, {@code thumbnail_width} and
+	 * {@code thumbnail_height} must also be present.
+	 */
+	@XmlElement(name = "thumbnail_url")
+	private String thumbnailUrl;
 
-    /**
-     * The height of the optional thumbnail. If this parameter is present,
-     * {@code thumbnail_url} and {@code thumbnail_width} must also be present.
-     */
-    @XmlElement(name = "thumbnail_height")
-    private Integer thumbnailHeight;
+	/**
+	 * The width of the optional thumbnail. If this parameter is present,
+	 * {@code thumbnail_url} and {@code thumbnail_height} must also be present.
+	 */
+	@XmlElement(name = "thumbnail_width")
+	private Integer thumbnailWidth;
 
-    /**
-     * Required for type {@code photo}. The source URL of the image. Consumers
-     * should be able to insert this URL into an {@code <img>} element. Only
-     * HTTP and HTTPS URLs are valid.
-     */
-    @XmlElement(name = "url")
-    private String url;
+	/**
+	 * The height of the optional thumbnail. If this parameter is present,
+	 * {@code thumbnail_url} and {@code thumbnail_width} must also be present.
+	 */
+	@XmlElement(name = "thumbnail_height")
+	private Integer thumbnailHeight;
 
-    /**
-     * Required for type {@code video} and {@code rich}. The HTML required to
-     * embed a video player. The HTML should have no padding or margins.
-     * Consumers may wish to load the HTML in an off-domain iframe to avoid XSS
-     * vulnerabilities.
-     */
-    @XmlElement(name = "html")
-    private String html;
+	/**
+	 * Required for type {@code photo}. The source URL of the image. Consumers
+	 * should be able to insert this URL into an {@code <img>} element. Only
+	 * HTTP and HTTPS URLs are valid.
+	 */
+	@XmlElement(name = "url")
+	private String url;
 
-    /**
-     * The width in pixels of the image specified in the {@code url} parameter.
-     */
-    @XmlElement(name = "width")
-    private Integer width;
+	/**
+	 * Required for type {@code video} and {@code rich}. The HTML required to
+	 * embed a video player. The HTML should have no padding or margins.
+	 * Consumers may wish to load the HTML in an off-domain iframe to avoid XSS
+	 * vulnerabilities.
+	 */
+	@XmlElement(name = "html")
+	private String html;
 
-    /**
-     * The height in pixels of the image specified in the {@code url} parameter.
-     */
-    @XmlElement(name = "height")
-    private Integer height;
+	/**
+	 * The width in pixels of the image specified in the {@code url} parameter.
+	 */
+	@XmlElement(name = "width")
+	private Integer width;
 
-    public String getType() {
-	return type;
-    }
+	/**
+	 * The height in pixels of the image specified in the {@code url} parameter.
+	 */
+	@XmlElement(name = "height")
+	private Integer height;
 
-    public void setType(String type) {
-	this.type = type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public String getVersion() {
-	return version;
-    }
+	public void setType(final String type) {
+		this.type = type;
+	}
 
-    public void setVersion(String version) {
-	this.version = version;
-    }
+	public String getVersion() {
+		return version;
+	}
 
-    public String getTitle() {
-	return title;
-    }
+	public void setVersion(final String version) {
+		this.version = version;
+	}
 
-    public void setTitle(String title) {
-	this.title = title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getAuthorName() {
-	return authorName;
-    }
+	public void setTitle(final String title) {
+		this.title = title;
+	}
 
-    public void setAuthorName(String authorName) {
-	this.authorName = authorName;
-    }
+	public String getAuthorName() {
+		return authorName;
+	}
 
-    public String getAuthorUrl() {
-	return authorUrl;
-    }
+	public void setAuthorName(final String authorName) {
+		this.authorName = authorName;
+	}
 
-    public void setAuthorUrl(String authorUrl) {
-	this.authorUrl = authorUrl;
-    }
+	public String getAuthorUrl() {
+		return authorUrl;
+	}
 
-    public String getProviderName() {
-	return providerName;
-    }
+	public void setAuthorUrl(final String authorUrl) {
+		this.authorUrl = authorUrl;
+	}
 
-    public void setProviderName(String providerName) {
-	this.providerName = providerName;
-    }
+	public String getProviderName() {
+		return providerName;
+	}
 
-    public String getProviderUrl() {
-	return providerUrl;
-    }
+	public void setProviderName(final String providerName) {
+		this.providerName = providerName;
+	}
 
-    public void setProviderUrl(String providerUrl) {
-	this.providerUrl = providerUrl;
-    }
+	public String getProviderUrl() {
+		return providerUrl;
+	}
 
-    public Long getCacheAge() {
-	return cacheAge;
-    }
+	public void setProviderUrl(final String providerUrl) {
+		this.providerUrl = providerUrl;
+	}
 
-    public void setCacheAge(Long cacheAge) {
-	this.cacheAge = cacheAge;
-    }
+	public Long getCacheAge() {
+		return cacheAge;
+	}
 
-    public String getThumbnailUrl() {
-	return thumbnailUrl;
-    }
+	public void setCacheAge(final Long cacheAge) {
+		this.cacheAge = cacheAge;
+	}
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-	this.thumbnailUrl = thumbnailUrl;
-    }
+	public String getThumbnailUrl() {
+		return thumbnailUrl;
+	}
 
-    public Integer getThumbnailWidth() {
-	return thumbnailWidth;
-    }
+	public void setThumbnailUrl(final String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
+	}
 
-    public void setThumbnailWidth(Integer thumbnailWidth) {
-	this.thumbnailWidth = thumbnailWidth;
-    }
+	public Integer getThumbnailWidth() {
+		return thumbnailWidth;
+	}
 
-    public Integer getThumbnailHeight() {
-	return thumbnailHeight;
-    }
+	public void setThumbnailWidth(final Integer thumbnailWidth) {
+		this.thumbnailWidth = thumbnailWidth;
+	}
 
-    public void setThumbnailHeight(Integer thumbnailHeight) {
-	this.thumbnailHeight = thumbnailHeight;
-    }
+	public Integer getThumbnailHeight() {
+		return thumbnailHeight;
+	}
 
-    public String getUrl() {
-	return url;
-    }
+	public void setThumbnailHeight(final Integer thumbnailHeight) {
+		this.thumbnailHeight = thumbnailHeight;
+	}
 
-    public void setUrl(String url) {
-	this.url = url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public String getHtml() {
-	return html;
-    }
+	public void setUrl(final String url) {
+		this.url = url;
+	}
 
-    public void setHtml(String html) {
-	this.html = html;
-    }
+	public String getHtml() {
+		return html;
+	}
 
-    public Integer getWidth() {
-	return width;
-    }
+	public void setHtml(final String html) {
+		this.html = html;
+	}
 
-    public void setWidth(Integer width) {
-	this.width = width;
-    }
+	public Integer getWidth() {
+		return width;
+	}
 
-    public Integer getHeight() {
-	return height;
-    }
+	public void setWidth(final Integer width) {
+		this.width = width;
+	}
 
-    public void setHeight(Integer height) {
-	this.height = height;
-    }
+	public Integer getHeight() {
+		return height;
+	}
+
+	public void setHeight(final Integer height) {
+		this.height = height;
+	}
 }

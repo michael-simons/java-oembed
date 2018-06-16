@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 michael-simons.eu.
+ * Copyright 2015-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,22 @@ import org.jsoup.nodes.Element;
  */
 class DefaultOembedResponseRenderer implements OembedResponseRenderer {
 
-    @Override
-    public String render(OembedResponse response, Element originalAnchor) {
-	String rv = null;
-	if (response.getType().equalsIgnoreCase("photo")) {
-	    final String _title = response.getTitle() == null ? "" : response.getTitle();
-	    rv = String.format("<img src=\"%s\" style=\"width:%dpx; height:%dpx;\" alt=\"%s\" title=\"%s\"/>", response.getUrl(), response.getWidth(), response.getHeight(), _title, _title);
-	} else if (response.getType().equalsIgnoreCase("video")) {
-	    rv = response.getHtml();
-	} else if (response.getType().equalsIgnoreCase("link")) {
-	    final String originalUrl = originalAnchor.absUrl("href");
-	    final String _title = response.getTitle() == null ? originalUrl : response.getTitle();
-	    final String _url = response.getUrl() == null ? originalUrl : response.getUrl();
-	    rv = String.format("<a href=\"%s\">%s</a>", _url, _title);
-	} else if (response.getType().equalsIgnoreCase("rich")) {
-	    rv = response.getHtml();
+	@Override
+	public String render(final OembedResponse response, final Element originalAnchor) {
+		String rv = null;
+		if (response.getType().equalsIgnoreCase("photo")) {
+			final String title = response.getTitle() == null ? "" : response.getTitle();
+			rv = String.format("<img src=\"%s\" style=\"width:%dpx; height:%dpx;\" alt=\"%s\" title=\"%s\"/>", response.getUrl(), response.getWidth(), response.getHeight(), title, title);
+		} else if (response.getType().equalsIgnoreCase("video")) {
+			rv = response.getHtml();
+		} else if (response.getType().equalsIgnoreCase("link")) {
+			final String originalUrl = originalAnchor.absUrl("href");
+			final String title = response.getTitle() == null ? originalUrl : response.getTitle();
+			final String url = response.getUrl() == null ? originalUrl : response.getUrl();
+			rv = String.format("<a href=\"%s\">%s</a>", url, title);
+		} else if (response.getType().equalsIgnoreCase("rich")) {
+			rv = response.getHtml();
+		}
+		return rv;
 	}
-	return rv;
-    }
 }

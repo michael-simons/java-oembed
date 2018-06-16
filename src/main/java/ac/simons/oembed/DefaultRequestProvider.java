@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 michael-simons.eu.
+ * Copyright 2014-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package ac.simons.oembed;
 
-import java.net.URI;
-import java.util.Optional;
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.util.Optional;
 
 /**
  * The default implementation of an oembed provider. Creates plain GET requests.
@@ -29,14 +29,22 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultRequestProvider implements RequestProvider {
 
-    public static final Logger logger = LoggerFactory.getLogger(DefaultRequestProvider.class.getPackage().getName());
-   
-    @Override
-    public HttpGet createRequestFor(String userAgent, Optional<String> applicationName, URI uri) {		
-	logger.debug("Creating HttpGet for url '{}'", uri.toString());
+	public static final Logger LOGGER = LoggerFactory.getLogger(DefaultRequestProvider.class.getPackage().getName());
 
-	final HttpGet request = new HttpGet(uri);
-	request.setHeader("User-Agent", String.format("%s%s", userAgent, applicationName.map(s -> "; " + s).orElse("")));
-	return request;
-    }  
+	/**
+	 * Must return an HTTP-Request against the given URL.
+	 * @param userAgent       Our user agent
+	 * @param applicationName An optional application name, will be added to the
+	 *                        userAgent if present
+	 * @param uri             The api url of the oembed endpoint
+	 * @return A prepared HTTP-Request
+	 */
+	@Override
+	public HttpGet createRequestFor(final String userAgent, final String applicationName, final URI uri) {
+		LOGGER.debug("Creating HttpGet for url '{}'", uri.toString());
+
+		final HttpGet request = new HttpGet(uri);
+		request.setHeader("User-Agent", String.format("%s%s", userAgent, Optional.ofNullable(applicationName).map(s -> "; " + s).orElse("")));
+		return request;
+	}
 }

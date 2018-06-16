@@ -25,41 +25,41 @@ import javax.xml.bind.JAXBException;
  *
  * @author Michael J. Simons, 2010-12-24
  */
-class OembedXmlParser implements OembedParser {
+final class OembedXmlParser implements OembedParser {
 
-    /**
-     * The JAXB context for parsing XML Oembed responses
-     */
-    private final JAXBContext jaxbContext;
+	/**
+	 * The JAXB context for parsing XML Oembed responses
+	 */
+	private final JAXBContext jaxbContext;
 
-    /**
-     * Creates a new OembedJsonParser. It can throw an exception if the JAXB
-     * context cannot be initialized.
-     */
-    public OembedXmlParser() {
-	try {
-	    this.jaxbContext = JAXBContext.newInstance(OembedResponse.class);
-	} catch (JAXBException ex) {
-	    // Ignore this... I have no clue how that should happen.
-	    throw new OembedException(ex);
+	/**
+	 * Creates a new OembedJsonParser. It can throw an exception if the JAXB
+	 * context cannot be initialized.
+	 */
+	OembedXmlParser() {
+		try {
+			this.jaxbContext = JAXBContext.newInstance(OembedResponse.class);
+		} catch (JAXBException ex) {
+			// Ignore this... I have no clue how that should happen.
+			throw new OembedException(ex);
+		}
 	}
-    }
 
-    @Override
-    public OembedResponse unmarshal(InputStream in) {
-	try {
-	    return (OembedResponse) jaxbContext.createUnmarshaller().unmarshal(in);
-	} catch (JAXBException e) {	    
-	    throw new OembedException(e);
+	@Override
+	public OembedResponse unmarshal(final InputStream in) {
+		try {
+			return (OembedResponse) jaxbContext.createUnmarshaller().unmarshal(in);
+		} catch (JAXBException e) {
+			throw new OembedException(e);
+		}
 	}
-    }
 
-    @Override
-    public void marshal(OembedResponse oembedResponse, OutputStream out) {
-	try {
-	    jaxbContext.createMarshaller().marshal(oembedResponse, out);
-	} catch (JAXBException e) {
-	    throw new OembedException(e);
+	@Override
+	public void marshal(final OembedResponse oembedResponse, final OutputStream out) {
+		try {
+			jaxbContext.createMarshaller().marshal(oembedResponse, out);
+		} catch (JAXBException e) {
+			throw new OembedException(e);
+		}
 	}
-    }
 }

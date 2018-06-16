@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 michael-simons.eu.
+ * Copyright 2015-2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ac.simons.oembed;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
+
 import org.apache.http.client.methods.HttpGet;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,18 +28,18 @@ import org.junit.Test;
  */
 public class DefaultRequestProviderTest {
 
-    @Test
-    public void createRequestForShouldWork() throws URISyntaxException {
-	final DefaultRequestProvider requestProvider = new DefaultRequestProvider();
+	@Test
+	public void createRequestForShouldWork() throws URISyntaxException {
+		final DefaultRequestProvider requestProvider = new DefaultRequestProvider();
 
-	HttpGet request = requestProvider.createRequestFor("java-oembed2/4711", Optional.empty(), new URI("https://dailyfratze.de"));
+		HttpGet request = requestProvider.createRequestFor("java-oembed2/4711", null, new URI("https://dailyfratze.de"));
 
-	Assert.assertEquals("https://dailyfratze.de", request.getURI().toString());
-	Assert.assertEquals("java-oembed2/4711", request.getFirstHeader("User-Agent").getValue());
+		Assert.assertEquals("https://dailyfratze.de", request.getURI().toString());
+		Assert.assertEquals("java-oembed2/4711", request.getFirstHeader("User-Agent").getValue());
 
-	request = requestProvider.createRequestFor("java-oembed2/4711", Optional.of("dailyfratze"), new URI("https://dailyfratze.de"));
+		request = requestProvider.createRequestFor("java-oembed2/4711", "dailyfratze", new URI("https://dailyfratze.de"));
 
-	Assert.assertEquals("https://dailyfratze.de", request.getURI().toString());
-	Assert.assertEquals("java-oembed2/4711; dailyfratze", request.getFirstHeader("User-Agent").getValue());
-    }
+		Assert.assertEquals("https://dailyfratze.de", request.getURI().toString());
+		Assert.assertEquals("java-oembed2/4711; dailyfratze", request.getFirstHeader("User-Agent").getValue());
+	}
 }

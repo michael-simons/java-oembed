@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 michael-simons.eu.
+ * Copyright 2018 michael-simons.eu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.oembed;
-
-import java.net.URI;
-import java.util.Optional;
-
-import org.apache.http.client.methods.HttpGet;
 
 /**
- * Only needed for tests
- *
- * @author Michael J. Simons, 2015-07-02
+ * Extensible oEmbed discovery service for Java.
  */
-public class DummyRequestProvider implements RequestProvider {
-
-	@Override
-	public HttpGet createRequestFor(String userAgent, String applicationName, URI uri) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-}
+package ac.simons.oembed;
