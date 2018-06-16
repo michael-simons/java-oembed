@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.michael-simons</groupId>
   <artifactId>java-oembed</artifactId>
-  <version>0.6.3-SNAPSHOT</version>
+  <version>0.7.1</version>
   <packaging>jar</packaging>
   <name>java-oembed</name>
   <description>Simple Oembed Client for Java</description>
@@ -365,6 +365,6 @@
     <connection>scm:git:git@github.com:michael-simons/java-oembed.git</connection>
     <developerConnection>scm:git:git@github.com:michael-simons/java-oembed.git</developerConnection>
     <url>https://github.com/michael-simons/java-oembed</url>
-    <tag>HEAD</tag>
+    <tag>0.7.1</tag>
   </scm>
 </project>
