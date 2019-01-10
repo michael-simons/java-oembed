@@ -20,6 +20,8 @@ Since version 0.6.1 this project is Java 10 *only*. In addition, it uses Spring 
 
 Since version 0.7.1 I have changed the API of _OembedService_ and removed _Optional<>_ as input parameter as suggested by various people (Joshua Bloch, Simon Harrer and others). I also took the freedom to apply some checkstyle rules and thus noticing I had several classes from which could have been extended. Those are now final as they should not have been part of the public API.
 
+Since version 0.8.1 this project is Java 11 *only*.
+
 The project is not yet on the module path because java-oembed uses JAXB for parsing XML which currently leads to a "split-package problem":https://github.com/javaee/jaxb-v2/issues/1168.
 
 h2. Usage
@@ -32,7 +34,7 @@ java-oembed is available in the Central Repository (since 0.2.10):
 <dependency>
     <groupId>eu.michael-simons</groupId>
     <artifactId>java-oembed</artifactId>
-    <version>0.5.8</version>
+    <version>0.8.1</version>
 </dependency>
 </code></pre>
 
