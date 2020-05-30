@@ -50,7 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Michael J. Simons, 2014-12-31
+ * @author Michael J. Simons
+ * @since 2014-12-31
  */
 public class OembedService {
 

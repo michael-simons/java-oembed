@@ -30,6 +30,7 @@
     <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
     <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
     <jsoup.version>1.11.3</jsoup.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
   </properties>
   <build>
     <pluginManagement>
@@ -306,7 +307,7 @@
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>1.9.3</version>
+      <version>${commons-beanutils.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
