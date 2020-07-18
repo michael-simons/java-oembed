@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -33,14 +34,18 @@ import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.EntryUnit;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -106,8 +111,7 @@ public class OembedService {
 	private String cacheName = OembedService.class.getName();
 
 	/**
-	 * Time in seconds responses are cached. Used if the response has no
-	 * cache_age.
+	 * Time in seconds responses are cached.
 	 */
 	private long defaultCacheAge = 3600;
 
@@ -213,9 +217,7 @@ public class OembedService {
 	 * @param cacheName The new cache name
 	 */
 	public void setCacheName(final String cacheName) {
-		if (this.cacheManager.isPresent() && this.cacheManager.get().cacheExists(this.cacheName)) {
-			this.cacheManager.get().removeCache(this.cacheName);
-		}
+		this.cacheManager.ifPresent(manager -> manager.removeCache(this.cacheName));
 		this.cacheName = cacheName;
 	}
 
@@ -236,6 +238,28 @@ public class OembedService {
 	}
 
 	/**
+	 * Gets (or create if it does not exist yet) cache for storing OEmbed responses.
+	 *
+	 * @return cache for storing responses corresponding to URLs
+	 * */
+	public Optional<Cache<String, OembedResponse>> getOrCreateCache() {
+		if (cacheManager.isPresent()) {
+			var cache = cacheManager.map(cm -> cm.getCache(this.cacheName, String.class, OembedResponse.class)).orElse(null);
+			if (cache != null) {
+				return Optional.of(cache);
+			}
+
+			return Optional.of(cacheManager.get().createCache(this.cacheName,
+					CacheConfigurationBuilder
+							.newCacheConfigurationBuilder(String.class, OembedResponse.class,
+									ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1000, EntryUnit.ENTRIES))
+							.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(defaultCacheAge)))));
+		}
+
+		return Optional.empty();
+	}
+
+	/**
 	 * Tries to find an endpoint for the given url. It first tries to find an
 	 * endpoint within the configured endpoints by a matching url scheme. If
 	 * that results in an empty endpoint and autodiscovier is true, than an http
@@ -247,14 +271,14 @@ public class OembedService {
 	 */
 	final Optional<OembedEndpoint> findEndpointFor(final String url) {
 		Optional<OembedEndpoint> rv = this.endpoints.keySet().stream()
-			.filter(
-				endpoint -> endpoint
-					.getUrlSchemes()
-					.stream()
-					.map(String::trim)
-					.anyMatch(url::matches)
-			)
-			.findFirst();
+				.filter(
+						endpoint -> endpoint
+								.getUrlSchemes()
+								.stream()
+								.map(String::trim)
+								.anyMatch(url::matches)
+				)
+				.findFirst();
 		if (!rv.isPresent() && autodiscovery) {
 			try {
 				final HttpResponse httpResponse = this.httpClient.execute(new HttpGet(url));
@@ -322,9 +346,7 @@ public class OembedService {
 			return Optional.empty();
 		}
 
-		var rv = this.cacheManager
-			.map(cm -> cm.addCacheIfAbsent(this.cacheName).get(trimmedUrl))
-			.map(element -> (OembedResponse) element.getObjectValue());
+		var rv = getOrCreateCache().map(cache -> cache.get(trimmedUrl));
 		// If there's already an oembed response cached, use that
 		if (rv.isPresent()) {
 			LOGGER.debug("Using OembedResponse from cache for '{}'...", trimmedUrl);
@@ -334,29 +356,26 @@ public class OembedService {
 		final Optional<OembedEndpoint> endPoint = this.findEndpointFor(trimmedUrl);
 		LOGGER.debug("Found endpoint {} for '{}'...", endPoint, trimmedUrl);
 		rv = endPoint
-			.map(ep -> this.endpoints
-				.getOrDefault(ep, defaultRequestProvider)
-				.createRequestFor(this.userAgent, this.applicationName, ep.toApiUrl(trimmedUrl))
-			)
-			.map(this::executeRequest)
-			.map(content -> {
-				OembedResponse oembedResponse = null;
-				try {
-					oembedResponse = parsers.get(endPoint.get().getFormat()).unmarshal(content);
-				} catch (OembedException ex) {
-					LOGGER.warn("Server returned an invalid oembed format for url '{}': {}", trimmedUrl, ex.getMessage());
-				}
-				return oembedResponse;
-			});
+				.map(ep -> this.endpoints
+						.getOrDefault(ep, defaultRequestProvider)
+						.createRequestFor(this.userAgent, this.applicationName, ep.toApiUrl(trimmedUrl))
+				)
+				.map(this::executeRequest)
+				.map(content -> {
+					OembedResponse oembedResponse = null;
+					try {
+						oembedResponse = parsers.get(endPoint.get().getFormat()).unmarshal(content);
+					} catch (OembedException ex) {
+						LOGGER.warn("Server returned an invalid oembed format for url '{}': {}", trimmedUrl, ex.getMessage());
+					}
+					return oembedResponse;
+				});
 
 		if (this.cacheManager.isPresent()) {
-			final Ehcache cache = this.cacheManager.get().addCacheIfAbsent(this.cacheName);
-			// Cache at least 60 seconds
-			final int cacheAge = (int) Math.min(Math.max(60L, rv.map(OembedResponse::getCacheAge).orElse(this.defaultCacheAge)), Integer.MAX_VALUE);
 			// We're adding failed urls to the cache as well to prevent them
 			// from being tried again over and over (at least for some seconds)
-			cache.put(new net.sf.ehcache.Element(trimmedUrl, rv.orElse(null), cacheAge, cacheAge));
-			LOGGER.debug("Cached {} for {} seconds for url '{}'...", rv, cacheAge, trimmedUrl);
+			getOrCreateCache().get().put(trimmedUrl, rv.orElse(null));
+			LOGGER.debug("Cached {} for {} seconds for url '{}'...", rv, defaultCacheAge, trimmedUrl);
 		}
 
 		return rv;
@@ -403,10 +422,10 @@ public class OembedService {
 				rv = (T) document;
 			} else {
 				document
-					.outputSettings()
-					.prettyPrint(false)
-					.escapeMode(EscapeMode.xhtml)
-					.charset(StandardCharsets.UTF_8);
+						.outputSettings()
+						.prettyPrint(false)
+						.escapeMode(EscapeMode.xhtml)
+						.charset(StandardCharsets.UTF_8);
 				rv = (T) Parser.unescapeEntities(document.body().html().trim(), true);
 			}
 		}
@@ -425,10 +444,10 @@ public class OembedService {
 			final String absUrl = a.absUrl("href");
 			final Optional<String> html = this.getOembedResponseFor(absUrl).map(response -> {
 				final OembedResponseRenderer renderer = this.renderers.entrySet().stream()
-					.filter(entry -> entry.getKey().stream().anyMatch(absUrl::matches))
-					.findFirst()
-					.map(Map.Entry::getValue)
-					.orElse(this.defaultRenderer);
+						.filter(entry -> entry.getKey().stream().anyMatch(absUrl::matches))
+						.findFirst()
+						.map(Map.Entry::getValue)
+						.orElse(this.defaultRenderer);
 				return renderer.render(response, a.clone());
 			});
 			if (html.isPresent() && !html.get().trim().isEmpty()) {
