@@ -17,21 +17,22 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <checkstyle.version>8.32</checkstyle.version>
     <java.version>11</java.version>
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
-    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
-    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+    <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
+    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
-    <maven-jacoco-plugin.version>0.8.5</maven-jacoco-plugin.version>
-    <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+    <maven-jacoco-plugin.version>0.8.14</maven-jacoco-plugin.version>
+    <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
     <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M2</maven-surefire-plugin.version>
-    <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
+    <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+    <spring-boot.version>2.1.18.RELEASE</spring-boot.version>
     <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
     <jsoup.version>1.21.2</jsoup.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
+    <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
   </properties>
   <build>
     <pluginManagement>
@@ -83,8 +84,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <target>${java.version}</target>
-          <source>${java.version}</source>
+          <release>${java.version}</release>
           <encoding>${project.build.sourceEncoding}</encoding>
           <showDeprecation>true</showDeprecation>
         </configuration>
@@ -202,6 +202,7 @@
           <releaseProfiles>release</releaseProfiles>
           <goals>deploy</goals>
           <pushChanges>false</pushChanges>
+          <localCheckout>true</localCheckout>
           <tagNameFormat>@{project.version}</tagNameFormat>
           <releaseProfiles>release</releaseProfiles>
         </configuration>
@@ -224,8 +225,9 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
+            <version>${maven-gpg-plugin.version}</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -346,7 +348,7 @@
   </dependencies>
   <organization>
     <name>michael-simons.eu</name>
-    <url>http://michael-simons.eu</url>
+    <url>https://michael-simons.eu</url>
   </organization>
   <inceptionYear>2010</inceptionYear>
   <developers>
@@ -355,7 +357,7 @@
       <email>michael@simons.ac</email>
     </developer>
   </developers>
-  <url>http://info.michael-simons.eu/2011/12/20/oembedding-twitter-updates-with-java-and-wordpress/</url>
+  <url>https://info.michael-simons.eu/2011/12/20/oembedding-twitter-updates-with-java-and-wordpress/</url>
   <scm>
     <connection>scm:git:git@github.com:michael-simons/java-oembed.git</connection>
     <developerConnection>scm:git:git@github.com:michael-simons/java-oembed.git</developerConnection>
