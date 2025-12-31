@@ -15,8 +15,8 @@
  */
 package ac.simons.oembed;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Michael J. Simons, 2014-12-28
@@ -26,21 +26,21 @@ public class OembedResponseTest {
     @Test
     public void beanShouldWorkAsExpected() {
 	final OembedResponse oembedResponse = new OembedResponse();
-	Assert.assertNull(oembedResponse.getType());
-	Assert.assertNull(oembedResponse.getVersion());
-	Assert.assertNull(oembedResponse.getTitle());
-	Assert.assertNull(oembedResponse.getAuthorName());
-	Assert.assertNull(oembedResponse.getAuthorUrl());
-	Assert.assertNull(oembedResponse.getProviderName());
-	Assert.assertNull(oembedResponse.getProviderUrl());
-	Assert.assertNull(oembedResponse.getCacheAge());
-	Assert.assertNull(oembedResponse.getThumbnailUrl());
-	Assert.assertNull(oembedResponse.getThumbnailWidth());
-	Assert.assertNull(oembedResponse.getThumbnailHeight());
-	Assert.assertNull(oembedResponse.getUrl());
-	Assert.assertNull(oembedResponse.getHtml());
-	Assert.assertNull(oembedResponse.getWidth());
-	Assert.assertNull(oembedResponse.getHeight());
+	Assertions.assertNull(oembedResponse.getType());
+	Assertions.assertNull(oembedResponse.getVersion());
+	Assertions.assertNull(oembedResponse.getTitle());
+	Assertions.assertNull(oembedResponse.getAuthorName());
+	Assertions.assertNull(oembedResponse.getAuthorUrl());
+	Assertions.assertNull(oembedResponse.getProviderName());
+	Assertions.assertNull(oembedResponse.getProviderUrl());
+	Assertions.assertNull(oembedResponse.getCacheAge());
+	Assertions.assertNull(oembedResponse.getThumbnailUrl());
+	Assertions.assertNull(oembedResponse.getThumbnailWidth());
+	Assertions.assertNull(oembedResponse.getThumbnailHeight());
+	Assertions.assertNull(oembedResponse.getUrl());
+	Assertions.assertNull(oembedResponse.getHtml());
+	Assertions.assertNull(oembedResponse.getWidth());
+	Assertions.assertNull(oembedResponse.getHeight());
 
 	oembedResponse.setType("type");
 	oembedResponse.setVersion("version");
@@ -58,20 +58,20 @@ public class OembedResponseTest {
 	oembedResponse.setWidth(44);
 	oembedResponse.setHeight(55);
 
-	Assert.assertEquals("type", oembedResponse.getType());
-	Assert.assertEquals("version", oembedResponse.getVersion());
-	Assert.assertEquals("title", oembedResponse.getTitle());
-	Assert.assertEquals("authorName", oembedResponse.getAuthorName());
-	Assert.assertEquals("authorUrl", oembedResponse.getAuthorUrl());
-	Assert.assertEquals("providerName", oembedResponse.getProviderName());
-	Assert.assertEquals("providerUrl", oembedResponse.getProviderUrl());
-	Assert.assertEquals(Long.valueOf(4711l), oembedResponse.getCacheAge());
-	Assert.assertEquals("thumbnailUrl", oembedResponse.getThumbnailUrl());
-	Assert.assertEquals(Integer.valueOf(23), oembedResponse.getThumbnailWidth());
-	Assert.assertEquals(Integer.valueOf(42), oembedResponse.getThumbnailHeight());
-	Assert.assertEquals("url", oembedResponse.getUrl());
-	Assert.assertEquals("html", oembedResponse.getHtml());
-	Assert.assertEquals(Integer.valueOf(44), oembedResponse.getWidth());
-	Assert.assertEquals(Integer.valueOf(55), oembedResponse.getHeight());
+	Assertions.assertEquals("type", oembedResponse.getType());
+	Assertions.assertEquals("version", oembedResponse.getVersion());
+	Assertions.assertEquals("title", oembedResponse.getTitle());
+	Assertions.assertEquals("authorName", oembedResponse.getAuthorName());
+	Assertions.assertEquals("authorUrl", oembedResponse.getAuthorUrl());
+	Assertions.assertEquals("providerName", oembedResponse.getProviderName());
+	Assertions.assertEquals("providerUrl", oembedResponse.getProviderUrl());
+	Assertions.assertEquals(Long.valueOf(4711l), oembedResponse.getCacheAge());
+	Assertions.assertEquals("thumbnailUrl", oembedResponse.getThumbnailUrl());
+	Assertions.assertEquals(Integer.valueOf(23), oembedResponse.getThumbnailWidth());
+	Assertions.assertEquals(Integer.valueOf(42), oembedResponse.getThumbnailHeight());
+	Assertions.assertEquals("url", oembedResponse.getUrl());
+	Assertions.assertEquals("html", oembedResponse.getHtml());
+	Assertions.assertEquals(Integer.valueOf(44), oembedResponse.getWidth());
+	Assertions.assertEquals(Integer.valueOf(55), oembedResponse.getHeight());
     }
 }

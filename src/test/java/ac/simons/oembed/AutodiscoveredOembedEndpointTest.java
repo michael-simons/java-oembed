@@ -18,8 +18,8 @@ package ac.simons.oembed;
 import ac.simons.oembed.OembedResponse.Format;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Michael J. Simons, 2015-01-09
@@ -29,12 +29,12 @@ public class AutodiscoveredOembedEndpointTest {
     @Test
     public void autodiscoveredOembedEndpointShouldWorkAsExpected() throws URISyntaxException {
 	final AutodiscoveredOembedEndpoint endpoint = new AutodiscoveredOembedEndpoint(new URI("http://foobar"), Format.xml);
-	Assert.assertEquals(Format.xml, endpoint.getFormat());
-	Assert.assertEquals(new URI("http://foobar"), endpoint.toApiUrl("http://heise.de"));
-	Assert.assertEquals(new URI("http://foobar"), endpoint.toApiUrl("http://xxx.de"));
+	Assertions.assertEquals(Format.xml, endpoint.getFormat());
+	Assertions.assertEquals(new URI("http://foobar"), endpoint.toApiUrl("http://heise.de"));
+	Assertions.assertEquals(new URI("http://foobar"), endpoint.toApiUrl("http://xxx.de"));
 	endpoint.setEndpoint("http://biking.michael-simons.eu");
 	endpoint.setFormat(Format.json);
-	Assert.assertEquals(new URI("http://foobar"), endpoint.toApiUrl("http://heise.de"));
-	Assert.assertEquals(Format.xml, endpoint.getFormat());
+	Assertions.assertEquals(new URI("http://foobar"), endpoint.toApiUrl("http://heise.de"));
+	Assertions.assertEquals(Format.xml, endpoint.getFormat());
     }
 }

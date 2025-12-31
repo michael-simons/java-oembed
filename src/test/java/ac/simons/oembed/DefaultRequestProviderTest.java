@@ -20,8 +20,8 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 
 import org.apache.http.client.methods.HttpGet;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Michael J. Simons, 2015-01-01
@@ -34,12 +34,12 @@ public class DefaultRequestProviderTest {
 
 		HttpGet request = requestProvider.createRequestFor("java-oembed2/4711", null, new URI("https://dailyfratze.de"));
 
-		Assert.assertEquals("https://dailyfratze.de", request.getURI().toString());
-		Assert.assertEquals("java-oembed2/4711", request.getFirstHeader("User-Agent").getValue());
+		Assertions.assertEquals("https://dailyfratze.de", request.getURI().toString());
+		Assertions.assertEquals("java-oembed2/4711", request.getFirstHeader("User-Agent").getValue());
 
 		request = requestProvider.createRequestFor("java-oembed2/4711", "dailyfratze", new URI("https://dailyfratze.de"));
 
-		Assert.assertEquals("https://dailyfratze.de", request.getURI().toString());
-		Assert.assertEquals("java-oembed2/4711; dailyfratze", request.getFirstHeader("User-Agent").getValue());
+		Assertions.assertEquals("https://dailyfratze.de", request.getURI().toString());
+		Assertions.assertEquals("java-oembed2/4711; dailyfratze", request.getFirstHeader("User-Agent").getValue());
 	}
 }

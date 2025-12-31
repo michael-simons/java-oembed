@@ -76,7 +76,7 @@ public class OembedService {
 	/**
 	 * An optional application name;
 	 */
-	private String applicationName;
+	private final String applicationName;
 
 	/**
 	 * The available parsers. This list isn't changeable.
@@ -112,12 +112,12 @@ public class OembedService {
 	private long defaultCacheAge = 3600;
 
 	/**
-	 * Used for autodiscovered endpoints.
+	 * Used for auto-discovered endpoints.
 	 */
 	private final RequestProvider defaultRequestProvider = new DefaultRequestProvider();
 
 	/**
-	 * Used for autodiscovered endpoints.
+	 * Used for auto-discovered endpoints.
 	 */
 	private final OembedResponseRenderer defaultRenderer = new DefaultOembedResponseRenderer();
 
@@ -137,7 +137,7 @@ public class OembedService {
 		final Properties version = new Properties();
 		try {
 			version.load(OembedService.class.getResourceAsStream("/oembed.properties"));
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 		}
 		this.userAgent = String.format("Java/%s java-oembed2/%s", System.getProperty("java.version"), version.getProperty("de.dailyfratze.text.oembed.version"));
 		this.applicationName = applicationName;
@@ -152,7 +152,7 @@ public class OembedService {
 			LOGGER.debug("Configuring request provider of type {} for endpoint {}...", endpoint.getRequestProviderClass(), endpoint.getName());
 			LOGGER.debug("Using properties: {}", endpoint.getRequestProviderProperties());
 
-			RequestProvider requestProvider = null;
+			RequestProvider requestProvider;
 			try {
 				requestProvider = endpoint.getRequestProviderClass().getDeclaredConstructor().newInstance();
 				BeanUtils.populate(requestProvider, endpoint.getRequestProviderProperties());
@@ -385,6 +385,7 @@ public class OembedService {
 	 * @param targetClass            The concrete classe for the document node
 	 * @return The same text with embedded urls if such urls existed
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> T embedUrls(final String textWithEmbeddableUrls, final String baseUrl, final Class<? extends T> targetClass) {
 		var optionalBaseUrl = Optional.ofNullable(baseUrl);
 		T rv;

@@ -20,32 +20,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * @author Michael J. Simons, 2014-12-28
+ * @author Michael J. Simons
+ * @since 2014-12-28
  */
 public class OembedJsonParserTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Test
     public void unmarshallingShouldWork() throws IOException {
-	final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";	
+	final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";
 	final OembedResponse response = new OembedJsonParser().unmarshal(new ByteArrayInputStream(responseString.getBytes()));
-	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
-	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
-	Assert.assertEquals(Long.valueOf(86400l), response.getCacheAge());
-	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
-	Assert.assertEquals("biking2", response.getProviderName());
-	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
-	Assert.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
-	Assert.assertEquals("rich", response.getType());
-	Assert.assertEquals("1.0", response.getVersion());
+	Assertions.assertEquals("Michael J. Simons", response.getAuthorName());
+	Assertions.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
+	Assertions.assertEquals(Long.valueOf(86400l), response.getCacheAge());
+	Assertions.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
+	Assertions.assertEquals("biking2", response.getProviderName());
+	Assertions.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
+	Assertions.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
+	Assertions.assertEquals("rich", response.getType());
+	Assertions.assertEquals("1.0", response.getVersion());
     }
 
     @Test
@@ -56,18 +52,18 @@ public class OembedJsonParserTest {
 	oembedJsonParser.marshal(oembedResponse, out);
 	out.flush();
 	out.close();
-	Assert.assertEquals("{}", new String(out.toByteArray()));
+	Assertions.assertEquals("{}", new String(out.toByteArray()));
 
 	out = new ByteArrayOutputStream();
 	oembedResponse.setVersion("1.0");
 	oembedJsonParser.marshal(oembedResponse, out);
 	out.flush();
 	out.close();
-	Assert.assertEquals("{\"version\":\"1.0\"}", new String(out.toByteArray()));
+	Assertions.assertEquals("{\"version\":\"1.0\"}", new String(out.toByteArray()));
     }
 
     @Test
-    public void handleExceptions1() throws IOException {
+    public void handleExceptions1() {
 	final InputStream in = new InputStream() {
 
 	    @Override
@@ -76,14 +72,13 @@ public class OembedJsonParserTest {
 	    }
 	};
 
-	expectedException.expect(OembedException.class);
-	expectedException.expectMessage("foobar");
-
-	new OembedJsonParser().unmarshal(in);
+	    var oembedJsonParser = new OembedJsonParser();
+	    Assertions.assertThrowsExactly(OembedException.class, () -> oembedJsonParser.unmarshal(in),
+	    "foobar");
     }
 
     @Test
-    public void handleExceptions2() throws IOException {
+    public void handleExceptions2() {
 	final OutputStream out = new OutputStream() {
 
 	    @Override
@@ -92,9 +87,11 @@ public class OembedJsonParserTest {
 	    }
 	};
 
-	expectedException.expect(OembedException.class);
-	expectedException.expectMessage("foobar");
 
-	new OembedJsonParser().marshal(new OembedResponse(), out);
+	    var oembedJsonParser = new OembedJsonParser();
+	    var oembedResponse = new OembedResponse();
+	    Assertions.assertThrowsExactly(OembedException.class, () ->  oembedJsonParser.marshal(oembedResponse, out),
+		    "foobar");
+
     }
 }

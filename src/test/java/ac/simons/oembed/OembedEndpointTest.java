@@ -18,33 +18,29 @@ package ac.simons.oembed;
 import ac.simons.oembed.OembedResponse.Format;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * @author Michael J. Simons, 2014-12-30
+ * @author Michael J. Simons
+ * @since 2014-12-30
  */
 public class OembedEndpointTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void beanShouldWorkAsExpected() {
 	final OembedEndpoint oembedEndpoint = new OembedEndpoint();
 
-	Assert.assertNull(oembedEndpoint.getName());
-	Assert.assertNull(oembedEndpoint.getEndpoint());
-	Assert.assertEquals(Format.json, oembedEndpoint.getFormat());
-	Assert.assertNull(oembedEndpoint.getMaxWidth());
-	Assert.assertNull(oembedEndpoint.getMaxHeight());
-	Assert.assertNull(oembedEndpoint.getUrlSchemes());
-	Assert.assertEquals(DefaultRequestProvider.class, oembedEndpoint.getRequestProviderClass());
-	Assert.assertNull(oembedEndpoint.getRequestProviderProperties());
-	Assert.assertEquals(DefaultOembedResponseRenderer.class, oembedEndpoint.getResponseRendererClass());
-	Assert.assertNull(oembedEndpoint.getResponseRendererProperties());
+	Assertions.assertNull(oembedEndpoint.getName());
+	Assertions.assertNull(oembedEndpoint.getEndpoint());
+	Assertions.assertEquals(Format.json, oembedEndpoint.getFormat());
+	Assertions.assertNull(oembedEndpoint.getMaxWidth());
+	Assertions.assertNull(oembedEndpoint.getMaxHeight());
+	Assertions.assertNull(oembedEndpoint.getUrlSchemes());
+	Assertions.assertEquals(DefaultRequestProvider.class, oembedEndpoint.getRequestProviderClass());
+	Assertions.assertNull(oembedEndpoint.getRequestProviderProperties());
+	Assertions.assertEquals(DefaultOembedResponseRenderer.class, oembedEndpoint.getResponseRendererClass());
+	Assertions.assertNull(oembedEndpoint.getResponseRendererProperties());
 
 	oembedEndpoint.setName("name");
 	oembedEndpoint.setEndpoint("endpoint");
@@ -57,16 +53,16 @@ public class OembedEndpointTest {
 	oembedEndpoint.setResponseRendererClass(DummyRenderer.class);
 	oembedEndpoint.setResponseRendererProperties(new HashMap<>());
 
-	Assert.assertEquals("name", oembedEndpoint.getName());
-	Assert.assertEquals("endpoint", oembedEndpoint.getEndpoint());
-	Assert.assertEquals(Format.xml, oembedEndpoint.getFormat());
-	Assert.assertEquals(Integer.valueOf(4711), oembedEndpoint.getMaxWidth());
-	Assert.assertEquals(Integer.valueOf(23), oembedEndpoint.getMaxHeight());
-	Assert.assertEquals(new ArrayList<>(), oembedEndpoint.getUrlSchemes());
-	Assert.assertEquals(DummyRequestProvider.class, oembedEndpoint.getRequestProviderClass());
-	Assert.assertEquals(new HashMap<>(), oembedEndpoint.getRequestProviderProperties());
-	Assert.assertEquals(DummyRenderer.class, oembedEndpoint.getResponseRendererClass());
-	Assert.assertEquals(new HashMap<>(), oembedEndpoint.getResponseRendererProperties());
+	Assertions.assertEquals("name", oembedEndpoint.getName());
+	Assertions.assertEquals("endpoint", oembedEndpoint.getEndpoint());
+	Assertions.assertEquals(Format.xml, oembedEndpoint.getFormat());
+	Assertions.assertEquals(Integer.valueOf(4711), oembedEndpoint.getMaxWidth());
+	Assertions.assertEquals(Integer.valueOf(23), oembedEndpoint.getMaxHeight());
+	Assertions.assertEquals(new ArrayList<>(), oembedEndpoint.getUrlSchemes());
+	Assertions.assertEquals(DummyRequestProvider.class, oembedEndpoint.getRequestProviderClass());
+	Assertions.assertEquals(new HashMap<>(), oembedEndpoint.getRequestProviderProperties());
+	Assertions.assertEquals(DummyRenderer.class, oembedEndpoint.getResponseRendererClass());
+	Assertions.assertEquals(new HashMap<>(), oembedEndpoint.getResponseRendererProperties());
     }
 
     @Test
@@ -78,20 +74,18 @@ public class OembedEndpointTest {
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
 
-	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", oembedEndpoint.toApiUrl("https://biking.michael-simons.eu/tracks/1").toString());
+	Assertions.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", oembedEndpoint.toApiUrl("https://biking.michael-simons.eu/tracks/1").toString());
 
 	oembedEndpoint.setEndpoint("https://api.twitter.com/1.1/statuses/oembed.%{format}");
 	oembedEndpoint.setFormat(Format.json);
 	oembedEndpoint.setMaxWidth(null);
 	oembedEndpoint.setMaxHeight(null);
 
-	Assert.assertEquals("https://api.twitter.com/1.1/statuses/oembed.json?url=https%3A%2F%2Ftwitter.com%2Frotnroll666%2Fstatus%2F549898095853838336", oembedEndpoint.toApiUrl("https://twitter.com/rotnroll666/status/549898095853838336").toString());
+	Assertions.assertEquals("https://api.twitter.com/1.1/statuses/oembed.json?url=https%3A%2F%2Ftwitter.com%2Frotnroll666%2Fstatus%2F549898095853838336", oembedEndpoint.toApiUrl("https://twitter.com/rotnroll666/status/549898095853838336").toString());
     }
 
     @Test
     public void toApiUrlShouldWork2() {
-	expectedException.expect(OembedException.class);
-	expectedException.expectMessage("Expected scheme name at index 0: :foobar:/test.de");
 
 	final OembedEndpoint oembedEndpoint = new OembedEndpoint();
 
@@ -102,7 +96,8 @@ public class OembedEndpointTest {
 	oembedEndpoint.setMaxHeight(23);
 	oembedEndpoint.setUrlSchemes(new ArrayList<>());
 
-	oembedEndpoint.toApiUrl("---");
+	Assertions.assertThrowsExactly(OembedException.class, () ->
+	oembedEndpoint.toApiUrl("---"), "Expected scheme name at index 0: :foobar:/test.de");
     }
 
 }

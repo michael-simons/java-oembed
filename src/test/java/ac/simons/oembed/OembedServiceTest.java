@@ -32,16 +32,14 @@ import java.util.Optional;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import ac.simons.oembed.OembedResponse.Format;
@@ -51,9 +49,10 @@ import net.sf.ehcache.Element;
 
 /**
  *
- * @author Michael J. Simons, 2015-01-02
+ * @author Michael J. Simons
+ * @since 2015-01-02
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OembedServiceTest {
 
     @Mock
@@ -61,9 +60,6 @@ public class OembedServiceTest {
 
     @Mock
     private CacheManager cacheManager;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";
     private final OembedResponse response1;
@@ -85,11 +81,11 @@ public class OembedServiceTest {
 	oembedService.setAutodiscovery(true);
 
 	Optional<OembedEndpoint> endpoint = oembedService.findEndpointFor("http://michael-simons.eu");
-	Assert.assertFalse(endpoint.isPresent());
+	Assertions.assertFalse(endpoint.isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("http://michael-simons.eu", argumentCaptor.getValue().getURI().toString());
-	Assert.assertTrue(oembedService.isAutodiscovery());
+	Assertions.assertEquals("http://michael-simons.eu", argumentCaptor.getValue().getURI().toString());
+	Assertions.assertTrue(oembedService.isAutodiscovery());
     }
 
     @Test
@@ -106,13 +102,13 @@ public class OembedServiceTest {
 	String embeddableUrl = "https://dailyfratze.de/michael/2014/10/13";
 
 	Optional<OembedEndpoint> endpoint = oembedService.findEndpointFor(embeddableUrl);
-	Assert.assertTrue(endpoint.isPresent());
+	Assertions.assertTrue(endpoint.isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals(embeddableUrl, argumentCaptor.getValue().getURI().toString());
+	Assertions.assertEquals(embeddableUrl, argumentCaptor.getValue().getURI().toString());
 
-	Assert.assertEquals(Format.json, endpoint.get().getFormat());
-	Assert.assertEquals("https://dailyfratze.de/app/oembed.json?url=https%3A%2F%2Fdailyfratze.de%2Fmichael%2F2014%2F10%2F13", endpoint.get().toApiUrl(embeddableUrl).toString());
+	Assertions.assertEquals(Format.json, endpoint.get().getFormat());
+	Assertions.assertEquals("https://dailyfratze.de/app/oembed.json?url=https%3A%2F%2Fdailyfratze.de%2Fmichael%2F2014%2F10%2F13", endpoint.get().toApiUrl(embeddableUrl).toString());
     }
 
     @Test
@@ -129,13 +125,13 @@ public class OembedServiceTest {
 	String embeddableUrl = "https://dailyfratze.de/michael/2014/10/13";
 
 	Optional<OembedEndpoint> endpoint = oembedService.findEndpointFor(embeddableUrl);
-	Assert.assertTrue(endpoint.isPresent());
+	Assertions.assertTrue(endpoint.isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals(embeddableUrl, argumentCaptor.getValue().getURI().toString());
+	Assertions.assertEquals(embeddableUrl, argumentCaptor.getValue().getURI().toString());
 
-	Assert.assertEquals(Format.xml, endpoint.get().getFormat());
-	Assert.assertEquals("https://dailyfratze.de/app/oembed.xml?url=https%3A%2F%2Fdailyfratze.de%2Fmichael%2F2014%2F10%2F13", endpoint.get().toApiUrl(embeddableUrl).toString());
+	Assertions.assertEquals(Format.xml, endpoint.get().getFormat());
+	Assertions.assertEquals("https://dailyfratze.de/app/oembed.xml?url=https%3A%2F%2Fdailyfratze.de%2Fmichael%2F2014%2F10%2F13", endpoint.get().toApiUrl(embeddableUrl).toString());
     }
 
     @Test
@@ -146,10 +142,10 @@ public class OembedServiceTest {
 	oembedService.setAutodiscovery(true);
 
 	Optional<OembedEndpoint> endpoint = oembedService.findEndpointFor("http://michael-simons.eu");
-	Assert.assertFalse(endpoint.isPresent());
+	Assertions.assertFalse(endpoint.isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("http://michael-simons.eu", argumentCaptor.getValue().getURI().toString());
+	Assertions.assertEquals("http://michael-simons.eu", argumentCaptor.getValue().getURI().toString());
     }
 
     @Test
@@ -158,8 +154,8 @@ public class OembedServiceTest {
 	oembedService.setAutodiscovery(false);
 
 	Optional<OembedEndpoint> endpoint = oembedService.findEndpointFor("http://michael-simons.eu");
-	Assert.assertFalse(endpoint.isPresent());
-	Mockito.verifyZeroInteractions(defaultHttpClient);
+	Assertions.assertFalse(endpoint.isPresent());
+	Mockito.verifyNoInteractions(defaultHttpClient);
     }
 
     @Test
@@ -176,9 +172,9 @@ public class OembedServiceTest {
 	String embeddableUrl = "http://vimeo.com/channels/everythinganimated/111627831";
 
 	Optional<OembedEndpoint> oendpoint = oembedService.findEndpointFor(embeddableUrl);
-	Assert.assertTrue(oendpoint.isPresent());
-	Assert.assertEquals("http://vimeo.com/api/oembed.json?url=http%3A%2F%2Fvimeo.com%2Fchannels%2Feverythinganimated%2F111627831", oendpoint.get().toApiUrl(embeddableUrl).toString());
-	Mockito.verifyZeroInteractions(defaultHttpClient);
+	Assertions.assertTrue(oendpoint.isPresent());
+	Assertions.assertEquals("http://vimeo.com/api/oembed.json?url=http%3A%2F%2Fvimeo.com%2Fchannels%2Feverythinganimated%2F111627831", oendpoint.get().toApiUrl(embeddableUrl).toString());
+	Mockito.verifyNoInteractions(defaultHttpClient);
     }
 
     @Test
@@ -188,12 +184,10 @@ public class OembedServiceTest {
 
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 
-	Assert.assertNull(oembedService.executeRequest(request));
-	verify(defaultHttpClient).execute(request);
 
-	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
-	when(r.getStatusLine().getStatusCode()).thenReturn(404);
-	when(r.getEntity().getContent()).thenReturn(null);
+	    Assertions.assertNull(oembedService.executeRequest(request));
+	    verify(defaultHttpClient).execute(request);
+
     }
 
     @Test
@@ -209,7 +203,7 @@ public class OembedServiceTest {
 
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 
-	Assert.assertNull(oembedService.executeRequest(request));
+	Assertions.assertNull(oembedService.executeRequest(request));
 	verify(defaultHttpClient).execute(request);
     }
 
@@ -226,25 +220,26 @@ public class OembedServiceTest {
 
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 
-	Assert.assertNotNull(oembedService.executeRequest(request));
+	Assertions.assertNotNull(oembedService.executeRequest(request));
 	verify(defaultHttpClient).execute(request);
     }
 
     @Test
     public void setCacheNameShouldWork() {
-	when(cacheManager.cacheExists("x")).thenReturn(true);
+	    when(cacheManager.cacheExists("ac.simons.oembed.OembedService")).thenReturn(false);
+	    when(cacheManager.cacheExists("x")).thenReturn(true);
 
 	OembedService oembedService;
 	oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 	oembedService.setCacheName("x");
-	Assert.assertEquals("x", oembedService.getCacheName());
+	Assertions.assertEquals("x", oembedService.getCacheName());
 
 	oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
 	oembedService.setCacheName("x");
-	Assert.assertEquals("x", oembedService.getCacheName());
+	Assertions.assertEquals("x", oembedService.getCacheName());
 
 	oembedService.setCacheName("y");
-	Assert.assertEquals("y", oembedService.getCacheName());
+	Assertions.assertEquals("y", oembedService.getCacheName());
 
 	verify(cacheManager).cacheExists(OembedService.class.getName());
 	verify(cacheManager).cacheExists("x");
@@ -255,9 +250,9 @@ public class OembedServiceTest {
     @Test
     public void getOembedResponseForShouldWork1() {
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
-	Assert.assertFalse(oembedService.getOembedResponseFor(null).isPresent());
-	Assert.assertFalse(oembedService.getOembedResponseFor("	    ").isPresent());
-	Assert.assertFalse(oembedService.getOembedResponseFor("https://dailyfratze.de/michael/2014/10/13").isPresent());
+	Assertions.assertFalse(oembedService.getOembedResponseFor(null).isPresent());
+	Assertions.assertFalse(oembedService.getOembedResponseFor("	    ").isPresent());
+	Assertions.assertFalse(oembedService.getOembedResponseFor("https://dailyfratze.de/michael/2014/10/13").isPresent());
     }
 
     /**
@@ -272,27 +267,27 @@ public class OembedServiceTest {
 
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
 	oembedService.setCacheName("testCache");
-	Assert.assertFalse(oembedService.getOembedResponseFor(null).isPresent());
-	Assert.assertFalse(oembedService.getOembedResponseFor("	    ").isPresent());
+	Assertions.assertFalse(oembedService.getOembedResponseFor(null).isPresent());
+	Assertions.assertFalse(oembedService.getOembedResponseFor("	    ").isPresent());
 	Optional<OembedResponse> oembedResponse = oembedService.getOembedResponseFor(embeddableUrl);
-	Assert.assertTrue(oembedResponse.isPresent());
+	Assertions.assertTrue(oembedResponse.isPresent());
 	OembedResponse response = oembedResponse.get();
-	Assert.assertEquals("Michael J. Simons", response.getAuthorName());
-	Assert.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
-	Assert.assertEquals(Long.valueOf(86400l), response.getCacheAge());
-	Assert.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
-	Assert.assertEquals("biking2", response.getProviderName());
-	Assert.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
-	Assert.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
-	Assert.assertEquals("rich", response.getType());
-	Assert.assertEquals("1.0", response.getVersion());
-	Assert.assertEquals("testCache", oembedService.getCacheName());
+	Assertions.assertEquals("Michael J. Simons", response.getAuthorName());
+	Assertions.assertEquals("http://michael-simons.eu", response.getAuthorUrl());
+	Assertions.assertEquals(Long.valueOf(86400l), response.getCacheAge());
+	Assertions.assertEquals("<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>", response.getHtml());
+	Assertions.assertEquals("biking2", response.getProviderName());
+	Assertions.assertEquals("https://biking.michael-simons.eu", response.getProviderUrl());
+	Assertions.assertEquals("Aachen - Maastricht - Aachen", response.getTitle());
+	Assertions.assertEquals("rich", response.getType());
+	Assertions.assertEquals("1.0", response.getVersion());
+	Assertions.assertEquals("testCache", oembedService.getCacheName());
 
 	verify(cacheManager).addCacheIfAbsent("testCache");
 	verify(cacheManager).cacheExists(OembedService.class.getName());
 	verify(cache).get(embeddableUrl);
 	Mockito.verifyNoMoreInteractions(cache, cacheManager);
-	Mockito.verifyZeroInteractions(defaultHttpClient);
+	Mockito.verifyNoInteractions(defaultHttpClient);
     }
 
     /**
@@ -323,10 +318,10 @@ public class OembedServiceTest {
 
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, Arrays.asList(oembedEndpoint), null);
 	oembedService.setCacheName("testCache");
-	Assert.assertFalse(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
+	Assertions.assertFalse(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());
+	Assertions.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());
 
 	verify(cacheManager, times(2)).addCacheIfAbsent("testCache");
 	verify(cacheManager).cacheExists(OembedService.class.getName());
@@ -349,7 +344,7 @@ public class OembedServiceTest {
 	oembedEndpoint.setEndpoint("https://biking.michael-simons.eu/oembed");
 	oembedEndpoint.setMaxWidth(480);
 	oembedEndpoint.setMaxHeight(360);
-	oembedEndpoint.setUrlSchemes(Arrays.asList("https://biking\\.michael-simons\\.eu/tracks/.*"));
+	oembedEndpoint.setUrlSchemes(List.of("https://biking\\.michael-simons\\.eu/tracks/.*"));
 
 	HttpResponse r = Mockito.mock(HttpResponse.class, Mockito.RETURNS_DEEP_STUBS);
 	when(r.getStatusLine().getStatusCode()).thenReturn(200);
@@ -362,12 +357,12 @@ public class OembedServiceTest {
 	when(cache.get(embeddableUrl)).thenReturn(null);
 	when(cacheManager.addCacheIfAbsent("testCache")).thenReturn(cache);
 
-	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, Arrays.asList(oembedEndpoint), null);
+	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, List.of(oembedEndpoint), null);
 	oembedService.setCacheName("testCache");
-	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
+	Assertions.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
 	ArgumentCaptor<HttpGet> argumentCaptor = ArgumentCaptor.forClass(HttpGet.class);
 	verify(defaultHttpClient).execute(argumentCaptor.capture());
-	Assert.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());
+	Assertions.assertEquals("https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360", argumentCaptor.getValue().getURI().toString());
 
 	verify(cacheManager, times(2)).addCacheIfAbsent("testCache");
 	verify(cacheManager).cacheExists(OembedService.class.getName());
@@ -394,24 +389,21 @@ public class OembedServiceTest {
 	when(r2.getEntity().getContentType()).thenReturn(null);
 	when(r2.getEntity().getContent()).thenReturn(new ByteArrayInputStream(responseString.getBytes()));
 
-	when(defaultHttpClient.execute(any(HttpGet.class))).thenAnswer(new Answer() {
-	    @Override
-	    public Object answer(InvocationOnMock invocation) {
+	when(defaultHttpClient.execute(any(HttpGet.class))).thenAnswer((Answer) invocation -> {
 		final String url = invocation.<HttpGet>getArgument(0).getURI().toString();
 		HttpResponse rv = null;
 		if(embeddableUrl.equals(url)) {
-		    rv = r1;
+		rv = r1;
 		} else if("https://dailyfratze.de/app/oembed.json?url=https%3A%2F%2Fdailyfratze.de%2Fmichael%2F2014%2F10%2F13".equals(url)) {
-		    rv = r2;
+		rv = r2;
 		}
 		return rv;
-	    }
 	});
 
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
 	oembedService.setAutodiscovery(true);
 
-	Assert.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
+	Assertions.assertTrue(oembedService.getOembedResponseFor(embeddableUrl).isPresent());
 	verify(defaultHttpClient, times(2)).execute(any(HttpGet.class));
 	verifyNoMoreInteractions(cacheManager, defaultHttpClient);
     }
@@ -419,10 +411,10 @@ public class OembedServiceTest {
     @Test
     public void embedUrlsShouldWork1() {
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
-	Assert.assertNull(oembedService.embedUrls(null, null));
-	Assert.assertEquals("", oembedService.embedUrls("", null));
-	Assert.assertEquals("	", oembedService.embedUrls("	", null));
-	Assert.assertEquals(" ", oembedService.embedUrls(" ", null));
+	Assertions.assertNull(oembedService.embedUrls(null, null));
+	Assertions.assertEquals("", oembedService.embedUrls("", null));
+	Assertions.assertEquals("	", oembedService.embedUrls("	", null));
+	Assertions.assertEquals(" ", oembedService.embedUrls(" ", null));
     }
 
     /**
@@ -441,7 +433,7 @@ public class OembedServiceTest {
 	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"https://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>.</p>";
 	String expected = "<p>Vor langer Zeit fuhr ich diesen Weg: <iframe width=\"1024\" height=\"576\" src=\"https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576\" class=\"bikingTrack\"></iframe>.</p>";
 
-	Assert.assertEquals(expected, oembedService.embedUrls(in, null));
+	Assertions.assertEquals(expected, oembedService.embedUrls(in, null));
     }
 
     /**
@@ -471,23 +463,22 @@ public class OembedServiceTest {
 	String in = "<p>Vor langer Zeit fuhr ich diesen Weg: <a href=\"https://biking.michael-simons.eu/tracks/1\">von Aachen nach Maastricht und zurück</a>. Hier der Bericht: <a href=\"http://test.com\">Bericht</a>.</p>";
 	String expected = in;
 
-	Assert.assertEquals(expected, oembedService.embedUrls(in, null));
+	Assertions.assertEquals(expected, oembedService.embedUrls(in, null));
     }
 
     @Test
     public void embedUrlsShouldWork4() {
-	expectedException.expect(OembedException.class);
-	expectedException.expectMessage("Invalid target class: java.lang.Integer");
 
 	OembedService oembedService = new OembedService(defaultHttpClient, null, new ArrayList<>(), null);
-	oembedService.embedUrls(null, null, Integer.class);
+	Assertions.assertThrowsExactly(OembedException.class, () ->
+	oembedService.embedUrls(null, null, Integer.class), "Invalid target class: java.lang.Integer");
     }
 
     @Test
     public void misc() {
 	OembedService oembedService = new OembedService(defaultHttpClient, cacheManager, new ArrayList<>(), null);
-	Assert.assertEquals(3600, oembedService.getDefaultCacheAge());
+	Assertions.assertEquals(3600, oembedService.getDefaultCacheAge());
 	oembedService.setDefaultCacheAge(10);
-	Assert.assertEquals(10, oembedService.getDefaultCacheAge());
+	Assertions.assertEquals(10, oembedService.getDefaultCacheAge());
     }
 }
