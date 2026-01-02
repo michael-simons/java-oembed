@@ -20,7 +20,7 @@ Since version 0.7.1 I have changed the API of _OembedService_ and removed _Optio
 
 Since version 0.8.1 this project is Java 11 *only*.
 
-Since version 1.0.0 this project is Java 17 *only*.
+Since version 1.0.0 this project is Java 17 *only* and uses Jakarta XML Bind instead of JAXB for parsing XML.
 
 h2. Usage
 

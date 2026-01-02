@@ -42,7 +42,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Michael J. Simons, 2015-01-09
+ * @author Michael J. Simons
+ * @since 2015-01-09
  */
 public class AutodiscoveredOembedEndpointTests {
 

@@ -42,14 +42,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector;
 
 /**
  * Provides JSON Parsing for {@link OembedResponse}s. This class uses a private
  * {@link ObjectMapper} to ensure that the JAXB annotation introspector is configured
  * correctly.
  *
- * @author Michael J. Simons, 2010-12-24
+ * @author Michael J. Simons
+ * @since 2010-12-24
  */
 public final class OembedJsonParser implements OembedParser {
 
@@ -64,7 +65,7 @@ public final class OembedJsonParser implements OembedParser {
 	public OembedJsonParser() {
 		this.objectMapper = new ObjectMapper()
 			.setAnnotationIntrospector(new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(),
-					new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())))
+					new JakartaXmlBindAnnotationIntrospector(TypeFactory.defaultInstance())))
 			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 

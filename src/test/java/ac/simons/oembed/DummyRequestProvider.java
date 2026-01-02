@@ -40,7 +40,8 @@ import org.apache.http.client.methods.HttpGet;
 /**
  * Only needed for tests
  *
- * @author Michael J. Simons, 2015-07-02
+ * @author Michael J. Simons
+ * @since 2015-07-02
  */
 public class DummyRequestProvider implements RequestProvider {
 

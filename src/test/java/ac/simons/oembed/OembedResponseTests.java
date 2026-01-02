@@ -38,7 +38,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Michael J. Simons, 2014-12-28
+ * @author Michael J. Simons
+ * @since 2014-12-28
  */
 public class OembedResponseTests {
 

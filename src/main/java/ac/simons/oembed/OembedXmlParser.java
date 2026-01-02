@@ -36,8 +36,8 @@ package ac.simons.oembed;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * Provides XML Parsing for {@link OembedResponse}s.

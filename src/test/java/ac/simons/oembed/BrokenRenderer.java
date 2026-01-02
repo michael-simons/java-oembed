@@ -36,7 +36,8 @@ package ac.simons.oembed;
 import org.jsoup.nodes.Element;
 
 /**
- * @author Michael J. Simons, 2015-01-02
+ * @author Michael J. Simons
+ * @since 2015-01-02
  */
 class BrokenRenderer implements OembedResponseRenderer {
 

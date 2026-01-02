@@ -41,7 +41,8 @@ import ac.simons.oembed.OembedResponse.Format;
  * This is an auto-discovered endpoint. It doesn't support api url generation but only
  * fixed api urls. The format is also fixed.
  *
- * @author Michael J. Simons, 2015-01-01
+ * @author Michael J. Simons
+ * @since 2015-01-01
  */
 final class AutodiscoveredOembedEndpoint extends OembedEndpoint {
 
