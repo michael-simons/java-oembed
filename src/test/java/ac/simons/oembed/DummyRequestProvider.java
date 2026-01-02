@@ -16,7 +16,6 @@
 package ac.simons.oembed;
 
 import java.net.URI;
-import java.util.Optional;
 
 import org.apache.http.client.methods.HttpGet;
 
@@ -29,6 +28,11 @@ public class DummyRequestProvider implements RequestProvider {
 
 	@Override
 	public HttpGet createRequestFor(String userAgent, String applicationName, URI uri) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported yet."); // To change body
+																		// of generated
+																		// methods, choose
+																		// Tools |
+																		// Templates.
 	}
+
 }

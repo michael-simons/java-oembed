@@ -15,36 +15,39 @@
  */
 package ac.simons.oembed;
 
+import java.net.URI;
+import java.util.Optional;
+
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.util.Optional;
-
 /**
  * The default implementation of an oembed provider. Creates plain GET requests.
  *
- * @author Michael J. Simons, 2014-12-31
+ * @author Michael J. Simons
+ * @since 2014-12-31
  */
 public class DefaultRequestProvider implements RequestProvider {
 
-	public static final Logger LOGGER = LoggerFactory.getLogger(DefaultRequestProvider.class.getPackage().getName());
+	static final Logger LOGGER = LoggerFactory.getLogger(DefaultRequestProvider.class.getPackage().getName());
 
 	/**
 	 * Must return an HTTP-Request against the given URL.
-	 * @param userAgent       Our user agent
-	 * @param applicationName An optional application name, will be added to the
-	 *                        userAgent if present
-	 * @param uri             The api url of the oembed endpoint
-	 * @return A prepared HTTP-Request
+	 * @param userAgent our user agent
+	 * @param applicationName an optional application name, will be added to the userAgent
+	 * if present
+	 * @param uri the api url of the oembed endpoint
+	 * @return a prepared HTTP-Request
 	 */
 	@Override
 	public HttpGet createRequestFor(final String userAgent, final String applicationName, final URI uri) {
 		LOGGER.debug("Creating HttpGet for url '{}'", uri.toString());
 
 		final HttpGet request = new HttpGet(uri);
-		request.setHeader("User-Agent", String.format("%s%s", userAgent, Optional.ofNullable(applicationName).map(s -> "; " + s).orElse("")));
+		request.setHeader("User-Agent",
+				String.format("%s%s", userAgent, Optional.ofNullable(applicationName).map(s -> "; " + s).orElse("")));
 		return request;
 	}
+
 }

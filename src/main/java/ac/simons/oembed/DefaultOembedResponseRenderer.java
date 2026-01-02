@@ -18,10 +18,10 @@ package ac.simons.oembed;
 import org.jsoup.nodes.Element;
 
 /**
- * A simple, default oembed response renderer. Uses the deliviered HTML in most
- * cases.
+ * A simple, default oembed response renderer. Uses the delivered HTML in most cases.
  *
- * @author Michael J. Simons, 2015-01-02
+ * @author Michael J. Simons
+ * @since 2015-01-02
  */
 class DefaultOembedResponseRenderer implements OembedResponseRenderer {
 
@@ -29,18 +29,23 @@ class DefaultOembedResponseRenderer implements OembedResponseRenderer {
 	public String render(final OembedResponse response, final Element originalAnchor) {
 		String rv = null;
 		if (response.getType().equalsIgnoreCase("photo")) {
-			final String title = response.getTitle() == null ? "" : response.getTitle();
-			rv = String.format("<img src=\"%s\" style=\"width:%dpx; height:%dpx;\" alt=\"%s\" title=\"%s\"/>", response.getUrl(), response.getWidth(), response.getHeight(), title, title);
-		} else if (response.getType().equalsIgnoreCase("video")) {
+			final String title = (response.getTitle() != null) ? response.getTitle() : "";
+			rv = String.format("<img src=\"%s\" style=\"width:%dpx; height:%dpx;\" alt=\"%s\" title=\"%s\"/>",
+					response.getUrl(), response.getWidth(), response.getHeight(), title, title);
+		}
+		else if (response.getType().equalsIgnoreCase("video")) {
 			rv = response.getHtml();
-		} else if (response.getType().equalsIgnoreCase("link")) {
+		}
+		else if (response.getType().equalsIgnoreCase("link")) {
 			final String originalUrl = originalAnchor.absUrl("href");
-			final String title = response.getTitle() == null ? originalUrl : response.getTitle();
-			final String url = response.getUrl() == null ? originalUrl : response.getUrl();
+			final String title = (response.getTitle() != null) ? response.getTitle() : originalUrl;
+			final String url = (response.getUrl() != null) ? response.getUrl() : originalUrl;
 			rv = String.format("<a href=\"%s\">%s</a>", url, title);
-		} else if (response.getType().equalsIgnoreCase("rich")) {
+		}
+		else if (response.getType().equalsIgnoreCase("rich")) {
 			rv = response.getHtml();
 		}
 		return rv;
 	}
+
 }

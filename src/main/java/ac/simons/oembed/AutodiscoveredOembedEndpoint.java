@@ -15,20 +15,20 @@
  */
 package ac.simons.oembed;
 
-import ac.simons.oembed.OembedResponse.Format;
-
 import java.net.URI;
 
+import ac.simons.oembed.OembedResponse.Format;
+
 /**
- * This is an autodiscovered endpoint. It doesn't support api url generation but
- * only fixed api urls. The format is also fixed.
+ * This is an auto-discovered endpoint. It doesn't support api url generation but only
+ * fixed api urls. The format is also fixed.
  *
  * @author Michael J. Simons, 2015-01-01
  */
 final class AutodiscoveredOembedEndpoint extends OembedEndpoint {
 
 	/**
-	 * The autodiscovered api url
+	 * The automatically discovered api url.
 	 */
 	private final URI apiUrl;
 
@@ -46,4 +46,5 @@ final class AutodiscoveredOembedEndpoint extends OembedEndpoint {
 	public void setFormat(final Format format) {
 		// Cannot be changed
 	}
+
 }

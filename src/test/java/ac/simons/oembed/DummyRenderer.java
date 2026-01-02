@@ -24,8 +24,13 @@ import org.jsoup.nodes.Element;
  */
 public class DummyRenderer implements OembedResponseRenderer {
 
-    @Override
-    public String render(OembedResponse response, Element originalAnchor) {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+	@Override
+	public String render(OembedResponse response, Element originalAnchor) {
+		throw new UnsupportedOperationException("Not supported yet."); // To change body
+																		// of generated
+																		// methods, choose
+																		// Tools |
+																		// Templates.
+	}
+
 }

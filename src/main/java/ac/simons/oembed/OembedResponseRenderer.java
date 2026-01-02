@@ -18,22 +18,22 @@ package ac.simons.oembed;
 import org.jsoup.nodes.Element;
 
 /**
- * The purpose of this interface is turning {@link OembedResponse}s into usable
- * chunks of html code.
+ * The purpose of this interface is turning {@link OembedResponse}s into usable chunks of
+ * html code.
  *
- * @author Michael J. Simons, 2014-12-31
+ * @author Michael J. Simons
+ * @since 2014-12-31
  */
 public interface OembedResponseRenderer {
 
 	/**
-	 * Renderes the {@link OembedResponse} {@code response} into an html string.
-	 * The original anchor is provided for giving more context information.
-	 *
-	 * @param response       The response that should be handled
-	 * @param originalAnchor The anchor that triggered the oembed request. This
-	 *                       is a clone of the original object, changes will not be propagated.
-	 * @return An html fragment containt the representation of the given
-	 * OembedResponse
+	 * Renders the {@link OembedResponse} {@code response} into a html string. The
+	 * original anchor is provided for giving more context information.
+	 * @param response the response that should be handled
+	 * @param originalAnchor the anchor that triggered the oembed request. This is a clone
+	 * of the original object, changes will not be propagated.
+	 * @return a html fragment containing the representation of the given OembedResponse
 	 */
 	String render(OembedResponse response, Element originalAnchor);
+
 }

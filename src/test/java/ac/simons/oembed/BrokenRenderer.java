@@ -21,8 +21,10 @@ import org.jsoup.nodes.Element;
  * @author Michael J. Simons, 2015-01-02
  */
 class BrokenRenderer implements OembedResponseRenderer {
-    @Override
-    public String render(OembedResponse response, Element originalAnchor) {
-	return "     ";
-    }    
+
+	@Override
+	public String render(OembedResponse response, Element originalAnchor) {
+		return "     ";
+	}
+
 }

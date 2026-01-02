@@ -17,29 +17,32 @@ package ac.simons.oembed;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 /**
  * Provides XML Parsing for {@link OembedResponse}s.
  *
- * @author Michael J. Simons, 2010-12-24
+ * @author Michael J. Simons
+ * @since 2010-12-24
  */
 final class OembedXmlParser implements OembedParser {
 
 	/**
-	 * The JAXB context for parsing XML Oembed responses
+	 * The JAXB context for parsing XML Oembed responses.
 	 */
 	private final JAXBContext jaxbContext;
 
 	/**
-	 * Creates a new OembedJsonParser. It can throw an exception if the JAXB
-	 * context cannot be initialized.
+	 * Creates a new OembedJsonParser. It can throw an exception if the JAXB context
+	 * cannot be initialized.
 	 */
 	OembedXmlParser() {
 		try {
 			this.jaxbContext = JAXBContext.newInstance(OembedResponse.class);
-		} catch (JAXBException ex) {
+		}
+		catch (JAXBException ex) {
 			// Ignore this... I have no clue how that should happen.
 			throw new OembedException(ex);
 		}
@@ -48,18 +51,21 @@ final class OembedXmlParser implements OembedParser {
 	@Override
 	public OembedResponse unmarshal(final InputStream in) {
 		try {
-			return (OembedResponse) jaxbContext.createUnmarshaller().unmarshal(in);
-		} catch (JAXBException e) {
-			throw new OembedException(e);
+			return (OembedResponse) this.jaxbContext.createUnmarshaller().unmarshal(in);
+		}
+		catch (JAXBException ex) {
+			throw new OembedException(ex);
 		}
 	}
 
 	@Override
 	public void marshal(final OembedResponse oembedResponse, final OutputStream out) {
 		try {
-			jaxbContext.createMarshaller().marshal(oembedResponse, out);
-		} catch (JAXBException e) {
-			throw new OembedException(e);
+			this.jaxbContext.createMarshaller().marshal(oembedResponse, out);
+		}
+		catch (JAXBException ex) {
+			throw new OembedException(ex);
 		}
 	}
+
 }

@@ -17,29 +17,32 @@ package ac.simons.oembed;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
 
 import org.apache.http.client.methods.HttpGet;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michael J. Simons, 2015-01-01
  */
-public class DefaultRequestProviderTest {
+public class DefaultRequestProviderTests {
 
 	@Test
 	public void createRequestForShouldWork() throws URISyntaxException {
 		final DefaultRequestProvider requestProvider = new DefaultRequestProvider();
 
-		HttpGet request = requestProvider.createRequestFor("java-oembed2/4711", null, new URI("https://dailyfratze.de"));
+		HttpGet request = requestProvider.createRequestFor("java-oembed2/4711", null,
+				new URI("https://dailyfratze.de"));
 
-		Assertions.assertEquals("https://dailyfratze.de", request.getURI().toString());
-		Assertions.assertEquals("java-oembed2/4711", request.getFirstHeader("User-Agent").getValue());
+		assertThat(request.getURI().toString()).isEqualTo("https://dailyfratze.de");
+		assertThat(request.getFirstHeader("User-Agent").getValue()).isEqualTo("java-oembed2/4711");
 
-		request = requestProvider.createRequestFor("java-oembed2/4711", "dailyfratze", new URI("https://dailyfratze.de"));
+		request = requestProvider.createRequestFor("java-oembed2/4711", "dailyfratze",
+				new URI("https://dailyfratze.de"));
 
-		Assertions.assertEquals("https://dailyfratze.de", request.getURI().toString());
-		Assertions.assertEquals("java-oembed2/4711; dailyfratze", request.getFirstHeader("User-Agent").getValue());
+		assertThat(request.getURI().toString()).isEqualTo("https://dailyfratze.de");
+		assertThat(request.getFirstHeader("User-Agent").getValue()).isEqualTo("java-oembed2/4711; dailyfratze");
 	}
+
 }

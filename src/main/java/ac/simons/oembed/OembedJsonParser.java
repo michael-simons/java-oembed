@@ -15,6 +15,10 @@
  */
 package ac.simons.oembed;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
@@ -22,22 +26,17 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 /**
  * Provides JSON Parsing for {@link OembedResponse}s. This class uses a private
- * {@link ObjectMapper} to ensure that the JAXB annotation introspector is
- * configured correctly.
+ * {@link ObjectMapper} to ensure that the JAXB annotation introspector is configured
+ * correctly.
  *
  * @author Michael J. Simons, 2010-12-24
  */
 public final class OembedJsonParser implements OembedParser {
 
 	/**
-	 * Private instance of an object mapper with JaxbAnnotationIntrospector
-	 * configured.
+	 * Private instance of an object mapper with JaxbAnnotationIntrospector configured.
 	 */
 	private final ObjectMapper objectMapper;
 
@@ -46,15 +45,17 @@ public final class OembedJsonParser implements OembedParser {
 	 */
 	public OembedJsonParser() {
 		this.objectMapper = new ObjectMapper()
-			.setAnnotationIntrospector(new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())))
+			.setAnnotationIntrospector(new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(),
+					new JaxbAnnotationIntrospector(TypeFactory.defaultInstance())))
 			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 
 	@Override
 	public OembedResponse unmarshal(final InputStream in) {
 		try {
-			return objectMapper.readValue(in, OembedResponse.class);
-		} catch (IOException ex) {
+			return this.objectMapper.readValue(in, OembedResponse.class);
+		}
+		catch (IOException ex) {
 			throw new OembedException(ex);
 		}
 	}
@@ -63,8 +64,10 @@ public final class OembedJsonParser implements OembedParser {
 	public void marshal(final OembedResponse oembedResponse, final OutputStream out) {
 		try {
 			this.objectMapper.writeValue(out, oembedResponse);
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			throw new OembedException(ex);
 		}
 	}
+
 }

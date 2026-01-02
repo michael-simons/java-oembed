@@ -20,7 +20,7 @@ Since version 0.7.1 I have changed the API of _OembedService_ and removed _Optio
 
 Since version 0.8.1 this project is Java 11 *only*.
 
-The project is not yet on the module path because java-oembed uses JAXB for parsing XML which currently leads to a "split-package problem":https://github.com/javaee/jaxb-v2/issues/1168.
+Since version 1.0.0 this project is Java 17 *only*.
 
 h2. Usage
 

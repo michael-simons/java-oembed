@@ -15,22 +15,24 @@
  */
 package ac.simons.oembed;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * This represents a valid OEmbed response according to the specs from
- * <a href="http://oembed.com">oembed.com</a>. In case anything breaks check the
- * endpoint in questions returns a valid response (types etc.).
+ * <a href="http://oembed.com">oembed.com</a>. In case anything breaks check the endpoint
+ * in questions returns a valid response (types etc.).
  *
- * @author Michael J. Simons, 2010-12-24
+ * @author Michael J. Simons
+ * @since 2010-12-24
  */
 @XmlRootElement(name = "oembed")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,14 +44,23 @@ public final class OembedResponse implements Serializable {
 	 * Constants for supported oembed formats.
 	 */
 	public enum Format {
-		json, xml
+
+		/**
+		 * Constant for JSON.
+		 */
+		json,
+		/**
+		 * Constant for XML.
+		 */
+		xml
+
 	}
 
 	private static final long serialVersionUID = -2038373410581285921L;
 
 	/**
-	 * The resource type. Valid values, along with value-specific parameters,
-	 * are described below.
+	 * The resource type. Valid values, along with value-specific parameters, are
+	 * described below.
 	 */
 	@XmlElement(name = "type")
 	private String type;
@@ -91,17 +102,16 @@ public final class OembedResponse implements Serializable {
 	private String providerUrl;
 
 	/**
-	 * The suggested cache lifetime for this resource, in seconds. Consumers may
-	 * choose to use this value or not.
+	 * The suggested cache lifetime for this resource, in seconds. Consumers may choose to
+	 * use this value or not.
 	 */
 	@XmlElement(name = "cache_age")
 	private Long cacheAge;
 
 	/**
-	 * A URL to a thumbnail image representing the resource. The thumbnail must
-	 * respect any {@code maxwidth} and {@code maxheight} parameters. If this
-	 * parameter is present, {@code thumbnail_width} and
-	 * {@code thumbnail_height} must also be present.
+	 * A URL to a thumbnail image representing the resource. The thumbnail must respect
+	 * any {@code maxwidth} and {@code maxheight} parameters. If this parameter is
+	 * present, {@code thumbnail_width} and {@code thumbnail_height} must also be present.
 	 */
 	@XmlElement(name = "thumbnail_url")
 	private String thumbnailUrl;
@@ -121,18 +131,17 @@ public final class OembedResponse implements Serializable {
 	private Integer thumbnailHeight;
 
 	/**
-	 * Required for type {@code photo}. The source URL of the image. Consumers
-	 * should be able to insert this URL into an {@code <img>} element. Only
-	 * HTTP and HTTPS URLs are valid.
+	 * Required for type {@code photo}. The source URL of the image. Consumers should be
+	 * able to insert this URL into an {@code <img>} element. Only HTTP and HTTPS URLs are
+	 * valid.
 	 */
 	@XmlElement(name = "url")
 	private String url;
 
 	/**
-	 * Required for type {@code video} and {@code rich}. The HTML required to
-	 * embed a video player. The HTML should have no padding or margins.
-	 * Consumers may wish to load the HTML in an off-domain iframe to avoid XSS
-	 * vulnerabilities.
+	 * Required for type {@code video} and {@code rich}. The HTML required to embed a
+	 * video player. The HTML should have no padding or margins. Consumers may wish to
+	 * load the HTML in an off-domain iframe to avoid XSS vulnerabilities.
 	 */
 	@XmlElement(name = "html")
 	private String html;
@@ -150,7 +159,7 @@ public final class OembedResponse implements Serializable {
 	private Integer height;
 
 	public String getType() {
-		return type;
+		return this.type;
 	}
 
 	public void setType(final String type) {
@@ -158,7 +167,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getVersion() {
-		return version;
+		return this.version;
 	}
 
 	public void setVersion(final String version) {
@@ -166,7 +175,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
 	public void setTitle(final String title) {
@@ -174,7 +183,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getAuthorName() {
-		return authorName;
+		return this.authorName;
 	}
 
 	public void setAuthorName(final String authorName) {
@@ -182,7 +191,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getAuthorUrl() {
-		return authorUrl;
+		return this.authorUrl;
 	}
 
 	public void setAuthorUrl(final String authorUrl) {
@@ -190,7 +199,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getProviderName() {
-		return providerName;
+		return this.providerName;
 	}
 
 	public void setProviderName(final String providerName) {
@@ -198,7 +207,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getProviderUrl() {
-		return providerUrl;
+		return this.providerUrl;
 	}
 
 	public void setProviderUrl(final String providerUrl) {
@@ -206,7 +215,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public Long getCacheAge() {
-		return cacheAge;
+		return this.cacheAge;
 	}
 
 	public void setCacheAge(final Long cacheAge) {
@@ -214,7 +223,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getThumbnailUrl() {
-		return thumbnailUrl;
+		return this.thumbnailUrl;
 	}
 
 	public void setThumbnailUrl(final String thumbnailUrl) {
@@ -222,7 +231,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public Integer getThumbnailWidth() {
-		return thumbnailWidth;
+		return this.thumbnailWidth;
 	}
 
 	public void setThumbnailWidth(final Integer thumbnailWidth) {
@@ -230,7 +239,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public Integer getThumbnailHeight() {
-		return thumbnailHeight;
+		return this.thumbnailHeight;
 	}
 
 	public void setThumbnailHeight(final Integer thumbnailHeight) {
@@ -238,7 +247,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getUrl() {
-		return url;
+		return this.url;
 	}
 
 	public void setUrl(final String url) {
@@ -246,7 +255,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public String getHtml() {
-		return html;
+		return this.html;
 	}
 
 	public void setHtml(final String html) {
@@ -254,7 +263,7 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public Integer getWidth() {
-		return width;
+		return this.width;
 	}
 
 	public void setWidth(final Integer width) {
@@ -262,10 +271,11 @@ public final class OembedResponse implements Serializable {
 	}
 
 	public Integer getHeight() {
-		return height;
+		return this.height;
 	}
 
 	public void setHeight(final Integer height) {
 		this.height = height;
 	}
+
 }

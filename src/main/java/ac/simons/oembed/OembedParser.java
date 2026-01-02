@@ -20,27 +20,27 @@ import java.io.OutputStream;
 
 /**
  * This is 1:1 copy from the interface of the same name from
- * <a href="https://github.com/michael-simons/java-oembed">java-oembed</a>
- * except for the checked exceptions.
+ * <a href="https://github.com/michael-simons/java-oembed">java-oembed</a> except for the
+ * checked exceptions.
  *
- * @author Michael J. Simons, 2010-12-24
+ * @author Michael J. Simons
+ * @since 2010-12-24
  */
 public interface OembedParser {
 
 	/**
-	 * Unmarshals an {@link OembedResponse} from the given inputstream
-	 *
-	 * @param in The inputstream to unmarshal
-	 * @return A full OembedResponse
+	 * Unmarshalls an {@link OembedResponse} from the given input-stream.
+	 * @param in the input-stream to unmarshal
+	 * @return a full OembedResponse
 	 */
 	OembedResponse unmarshal(InputStream in);
 
 	/**
 	 * Marshals the given {@link OembedResponse} {@code oembedResponse} into the
 	 * OutputStream {@code out}.
-	 *
-	 * @param oembedResponse The oembed response that should be written to the stream
-	 * @param out            The outputstream to write to
+	 * @param oembedResponse the oembed response that should be written to the stream
+	 * @param out the output-stream to write to
 	 */
 	void marshal(OembedResponse oembedResponse, OutputStream out);
+
 }

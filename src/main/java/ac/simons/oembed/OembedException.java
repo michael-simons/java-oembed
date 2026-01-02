@@ -16,8 +16,8 @@
 package ac.simons.oembed;
 
 /**
- * An exception for wrapping any checked exception that might happens due
- * parsing of responses etc.
+ * An exception for wrapping any checked exception that might happens due parsing of
+ * responses etc.
  *
  * @author Michael J. Simons, 2010-12-24
  */
@@ -32,4 +32,5 @@ public class OembedException extends RuntimeException {
 	public OembedException(final String message) {
 		super(message);
 	}
+
 }

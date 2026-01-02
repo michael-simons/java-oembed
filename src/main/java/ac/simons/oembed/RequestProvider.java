@@ -15,25 +15,26 @@
  */
 package ac.simons.oembed;
 
-import org.apache.http.client.methods.HttpGet;
-
 import java.net.URI;
+
+import org.apache.http.client.methods.HttpGet;
 
 /**
  * An oembed provider creates Http requests for embeddable urls.
  *
- * @author Michael J. Simons, 2014-12-28
+ * @author Michael J. Simons
+ * @since 2014-12-28
  */
 public interface RequestProvider {
 
 	/**
 	 * Creates an executable http request (GET) for the given url.
-	 *
-	 * @param userAgent       Our user agent
-	 * @param applicationName An optional application name, will be added to the
-	 *                        userAgent if present
-	 * @param uri             The api url of the oembed endpoint
-	 * @return The http request for the url {@code url}
+	 * @param userAgent our user agent
+	 * @param applicationName an optional application name, will be added to the userAgent
+	 * if present
+	 * @param uri the api url of the oembed endpoint
+	 * @return the http request for the url {@code url}
 	 */
 	HttpGet createRequestFor(String userAgent, String applicationName, URI uri);
+
 }
