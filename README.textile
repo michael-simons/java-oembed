@@ -72,9 +72,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @author Michael J. Simons, 2014-12-31
- */
 @Configuration
 @ConfigurationProperties(prefix = "some-app.oembed")
 public class OembedConfig {
@@ -136,7 +133,7 @@ public class OembedConfig {
 and achieving the same result as in the stand alone version through the following properties:
 
 <pre><code>
-# A flag wether autodiscovery of oembed endpoints should be tried. Defaults to false.
+# A flag whether autodiscovery of oembed endpoints should be tried. Defaults to false.
 # some-app.oembed.autodiscovery =
 
 # The name of the cached used by this service. Defaults to "ac.simons.oembed.OembedService".
