@@ -2,7 +2,7 @@ Created by Michael Simons, michael-simons.eu
 and released under The BSD License
 http://www.opensource.org/licenses/bsd-license.php
 
-Copyright (c) 2010, Michael Simons
+Copyright (c) 2010-2026, Michael Simons
 All rights reserved.
 
 Redistribution  and  use  in  source   and  binary  forms,  with  or   without
