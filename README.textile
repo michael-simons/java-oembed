@@ -8,7 +8,7 @@ The core service of this project is the _OembedService_ which takes several endp
 
 java-oembed can be configured to use an "ehcache CacheManager instance":http://ehcache.org/.
 
-The project is a ready to use configured maven/eclipse project and works nice my "java-autolinker":https://github.com/michael-simons/java-autolinker.
+The project is a ready to use configured maven project and works nice my "java-autolinker":https://github.com/michael-simons/java-autolinker.
 
 *Important*
 
