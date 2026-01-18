@@ -34,33 +34,56 @@
 package ac.simons.oembed;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
-import org.ehcache.expiry.ExpiryPolicy;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A custom {@link ExpiryPolicy} for Ehcache 3.x that extracts the TTL from
- * {@link CachedOembedResponse} wrappers, enabling per-entry expiration times.
- *
+ * @author Oliver Lockwood
  * @author Michael J. Simons
  * @since 2026-01-17
  */
-public final class CachedOembedResponseExpiryPolicy implements ExpiryPolicy<String, CachedOembedResponse> {
+class OembedResponseExpiryPolicyTests {
 
-	@Override
-	public Duration getExpiryForCreation(String key, CachedOembedResponse value) {
-		return Duration.ofSeconds(value.getTtlSeconds());
+	@Test
+	void expiryPolicyShouldReturnCorrectDuration() {
+		OembedResponse response = new OembedResponse();
+		response.setType("rich");
+		response.setVersion("1.0");
+		response.setCacheAge(120L);
+
+		OembedResponseExpiryPolicy policy = new OembedResponseExpiryPolicy();
+		OembedResponseWrapper cached = new OembedResponseWrapper(response);
+
+		Duration duration = policy.getExpiryForCreation("key", cached);
+		assertThat(duration).isEqualTo(Duration.ofSeconds(120));
 	}
 
-	@Override
-	public Duration getExpiryForAccess(String key, Supplier<? extends CachedOembedResponse> value) {
-		return null;
+	@Test
+	void expiryPolicyShouldReturnNullForAccess() {
+		OembedResponseExpiryPolicy policy = new OembedResponseExpiryPolicy();
+
+		Duration duration = policy.getExpiryForAccess("key", () -> new OembedResponseWrapper(null));
+		assertThat(duration).isNull();
 	}
 
-	@Override
-	public Duration getExpiryForUpdate(String key, Supplier<? extends CachedOembedResponse> oldValue,
-			CachedOembedResponse newValue) {
-		return Duration.ofSeconds(newValue.getTtlSeconds());
+	@Test
+	void expiryPolicyShouldReturnDurationForUpdate() {
+		OembedResponse oldValue = new OembedResponse();
+		oldValue.setType("rich");
+		oldValue.setVersion("1.0");
+		oldValue.setCacheAge(120L);
+
+		OembedResponse newValue = new OembedResponse();
+		newValue.setType("rich");
+		newValue.setVersion("1.0");
+		newValue.setCacheAge(300L);
+
+		OembedResponseExpiryPolicy policy = new OembedResponseExpiryPolicy();
+		Duration duration = policy.getExpiryForUpdate("key", () -> new OembedResponseWrapper(oldValue),
+				new OembedResponseWrapper(newValue));
+		assertThat(duration).isEqualTo(Duration.ofSeconds(300));
 	}
 
 }

@@ -86,7 +86,7 @@ public class OembedService {
 	/**
 	 * An optional cache manager used for caching oembed responses.
 	 */
-	private final Optional<CacheManager> cacheManager;
+	private final CacheManager cacheManager;
 
 	/**
 	 * The user agent to use. We want to be a goot net citizen and provide some info about
@@ -126,11 +126,6 @@ public class OembedService {
 	private String cacheName = OembedService.class.getName();
 
 	/**
-	 * Time in seconds responses are cached. Used if the response has no cache_age.
-	 */
-	private long defaultCacheAge = 3600;
-
-	/**
 	 * Used for auto-discovered endpoints.
 	 */
 	private final RequestProvider defaultRequestProvider = new DefaultRequestProvider();
@@ -139,6 +134,8 @@ public class OembedService {
 	 * Used for auto-discovered endpoints.
 	 */
 	private final OembedResponseRenderer defaultRenderer = new DefaultOembedResponseRenderer();
+
+	private final OembedResponseExpiryPolicy expiryPolicy = new OembedResponseExpiryPolicy();
 
 	/**
 	 * Creates a new {@code OembedService}. This service depends on a {@link HttpClient}
@@ -151,7 +148,7 @@ public class OembedService {
 	public OembedService(final HttpClient httpClient, final CacheManager cacheManager,
 			final List<OembedEndpoint> endpoints, final String applicationName) {
 		this.httpClient = httpClient;
-		this.cacheManager = Optional.ofNullable(cacheManager);
+		this.cacheManager = cacheManager;
 		final Properties version = new Properties();
 		try {
 			version.load(OembedService.class.getResourceAsStream("/oembed.properties"));
@@ -238,9 +235,9 @@ public class OembedService {
 	 * @param cacheName the new cache name
 	 */
 	public void setCacheName(final String cacheName) {
-		if (this.cacheManager.isPresent()
-				&& this.cacheManager.get().getCache(this.cacheName, String.class, CachedOembedResponse.class) != null) {
-			this.cacheManager.get().removeCache(this.cacheName);
+		if (this.cacheManager != null
+				&& this.cacheManager.getCache(this.cacheName, String.class, OembedResponseWrapper.class) != null) {
+			this.cacheManager.removeCache(this.cacheName);
 		}
 		this.cacheName = cacheName;
 	}
@@ -249,7 +246,7 @@ public class OembedService {
 	 * {@return the default time in seconds responses are cached}
 	 */
 	public long getDefaultCacheAge() {
-		return this.defaultCacheAge;
+		return this.expiryPolicy.getDefaultCacheAge();
 	}
 
 	/**
@@ -257,7 +254,7 @@ public class OembedService {
 	 * @param defaultCacheAge new default cache age in seconds
 	 */
 	public void setDefaultCacheAge(final long defaultCacheAge) {
-		this.defaultCacheAge = defaultCacheAge;
+		this.expiryPolicy.setDefaultCacheAge(defaultCacheAge);
 	}
 
 	/**
@@ -337,19 +334,21 @@ public class OembedService {
 	/**
 	 * Gets or creates the cache for oembed responses. In Ehcache 3.x, caches need to be
 	 * explicitly created with a configuration.
-	 * @param cm the cache manager
-	 * @return the cache instance
+	 * @return the cache instance or null if there is no cache manager
 	 */
-	private Cache<String, CachedOembedResponse> getOrCreateCache(CacheManager cm) {
-		Cache<String, CachedOembedResponse> cache = cm.getCache(this.cacheName, String.class,
-				CachedOembedResponse.class);
-		if (cache == null) {
-			cache = cm.createCache(this.cacheName, CacheConfigurationBuilder
-				.newCacheConfigurationBuilder(String.class, CachedOembedResponse.class, ResourcePoolsBuilder.heap(1000))
-				.withExpiry(new CachedOembedResponseExpiryPolicy())
-				.build());
+	private Cache<String, OembedResponseWrapper> getOrCreateCache() {
+		if (this.cacheManager == null) {
+			return null;
 		}
-		return cache;
+		var cache = this.cacheManager.getCache(this.cacheName, String.class, OembedResponseWrapper.class);
+		if (cache != null) {
+			return cache;
+		}
+
+		return this.cacheManager.createCache(this.cacheName, CacheConfigurationBuilder
+			.newCacheConfigurationBuilder(String.class, OembedResponseWrapper.class, ResourcePoolsBuilder.heap(1000))
+			.withExpiry(new OembedResponseExpiryPolicy())
+			.build());
 	}
 
 	/**
@@ -366,9 +365,9 @@ public class OembedService {
 			return Optional.empty();
 		}
 
-		var rv = this.cacheManager.map(this::getOrCreateCache)
+		var rv = Optional.ofNullable(this.getOrCreateCache())
 			.map(cache -> cache.get(trimmedUrl))
-			.map(CachedOembedResponse::getResponse);
+			.map(OembedResponseWrapper::value);
 		// If there's already an oembed response cached, use that
 		if (rv.isPresent()) {
 			LOGGER.debug("Using OembedResponse from cache for '{}'...", trimmedUrl);
@@ -393,15 +392,12 @@ public class OembedService {
 				return oembedResponse;
 			});
 
-		if (this.cacheManager.isPresent()) {
-			final Cache<String, CachedOembedResponse> cache = getOrCreateCache(this.cacheManager.get());
-			// Cache at least 60 seconds
-			final int cacheAge = (int) Math.min(
-					Math.max(60L, rv.map(OembedResponse::getCacheAge).orElse(this.defaultCacheAge)), Integer.MAX_VALUE);
+		if (this.cacheManager != null) {
+			var cache = getOrCreateCache();
 			// We're adding failed urls to the cache as well to prevent them
 			// from being tried again over and over (at least for some seconds)
-			cache.put(trimmedUrl, new CachedOembedResponse(rv.orElse(null), cacheAge));
-			LOGGER.debug("Cached {} for {} seconds for url '{}'...", rv, cacheAge, trimmedUrl);
+			cache.put(trimmedUrl, new OembedResponseWrapper(rv.orElse(null)));
+			LOGGER.debug("Cached response {} from url '{}'...", rv, trimmedUrl);
 		}
 
 		return rv;

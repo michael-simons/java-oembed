@@ -33,46 +33,60 @@
  */
 package ac.simons.oembed;
 
-import java.io.Serializable;
+import java.time.Duration;
+import java.util.function.Supplier;
+
+import org.ehcache.expiry.ExpiryPolicy;
 
 /**
- * A wrapper class for caching {@link OembedResponse} objects with per-entry TTL support.
- * Ehcache 3.x doesn't support per-element TTL like Ehcache 2.x did, so this wrapper
- * stores the TTL in seconds which is used by {@link CachedOembedResponseExpiryPolicy}.
+ * A custom {@link ExpiryPolicy} for Ehcache 3.x that extracts the TTL from an
+ * {@link OembedResponse}, enabling per-entry expiration times.
  *
+ * @author Oliver Lockwood
  * @author Michael J. Simons
  * @since 2026-01-17
  */
-public final class CachedOembedResponse implements Serializable {
-
-	private static final long serialVersionUID = 1L;
-
-	private final OembedResponse response;
-
-	private final int ttlSeconds;
+final class OembedResponseExpiryPolicy implements ExpiryPolicy<String, OembedResponseWrapper> {
 
 	/**
-	 * Creates a new cached response wrapper.
-	 * @param response the oembed response, may be null for failed lookups
-	 * @param ttlSeconds the time-to-live in seconds
+	 * Time in seconds responses are cached. Used if the response has no cache_age.
 	 */
-	public CachedOembedResponse(OembedResponse response, int ttlSeconds) {
-		this.response = response;
-		this.ttlSeconds = ttlSeconds;
+	private long defaultCacheAge = 3600;
+
+	@Override
+	public Duration getExpiryForCreation(String key, OembedResponseWrapper value) {
+		return getExpiryOf(value);
 	}
 
-	/**
-	 * {@return the wrapped oembed response, may be null}
-	 */
-	public OembedResponse getResponse() {
-		return this.response;
+	@Override
+	public Duration getExpiryForAccess(String key, Supplier<? extends OembedResponseWrapper> value) {
+		return null;
 	}
 
-	/**
-	 * {@return the time-to-live in seconds for this cache entry}
-	 */
-	public int getTtlSeconds() {
-		return this.ttlSeconds;
+	@Override
+	public Duration getExpiryForUpdate(String key, Supplier<? extends OembedResponseWrapper> oldValue,
+			OembedResponseWrapper newValue) {
+		return getExpiryOf(newValue);
+	}
+
+	Duration getExpiryOf(OembedResponseWrapper wrapper) {
+		long cacheAge;
+		if (wrapper.value() != null && wrapper.value().getCacheAge() != null) {
+			// Cache at least 60 seconds
+			cacheAge = Math.max(60, wrapper.value().getCacheAge());
+		}
+		else {
+			cacheAge = this.defaultCacheAge;
+		}
+		return Duration.ofSeconds(Math.min(cacheAge, Integer.MAX_VALUE));
+	}
+
+	long getDefaultCacheAge() {
+		return this.defaultCacheAge;
+	}
+
+	void setDefaultCacheAge(long defaultCacheAge) {
+		this.defaultCacheAge = defaultCacheAge;
 	}
 
 }

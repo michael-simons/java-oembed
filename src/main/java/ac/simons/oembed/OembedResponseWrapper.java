@@ -33,62 +33,13 @@
  */
 package ac.simons.oembed;
 
-import java.time.Duration;
-
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
+ * EHCache 3 is unhappy with {@literal null} values, so we wrap them.
+ *
+ * @param value actual OEmbed response, might be {@literal null}
+ * @author Oliver Lockwood
  * @author Michael J. Simons
  * @since 2026-01-17
  */
-class CachedOembedResponseTests {
-
-	@Test
-	void shouldStoreTtlAndResponse() {
-		OembedResponse response = new OembedResponse();
-		response.setType("rich");
-		response.setVersion("1.0");
-
-		CachedOembedResponse cached = new CachedOembedResponse(response, 3600);
-
-		assertThat(cached.getResponse()).isSameAs(response);
-		assertThat(cached.getTtlSeconds()).isEqualTo(3600);
-	}
-
-	@Test
-	void shouldHandleNullResponse() {
-		CachedOembedResponse cached = new CachedOembedResponse(null, 60);
-
-		assertThat(cached.getResponse()).isNull();
-		assertThat(cached.getTtlSeconds()).isEqualTo(60);
-	}
-
-	@Test
-	void expiryPolicyShouldReturnCorrectDuration() {
-		CachedOembedResponseExpiryPolicy policy = new CachedOembedResponseExpiryPolicy();
-		CachedOembedResponse cached = new CachedOembedResponse(null, 120);
-
-		Duration duration = policy.getExpiryForCreation("key", cached);
-		assertThat(duration).isEqualTo(Duration.ofSeconds(120));
-	}
-
-	@Test
-	void expiryPolicyShouldReturnNullForAccess() {
-		CachedOembedResponseExpiryPolicy policy = new CachedOembedResponseExpiryPolicy();
-
-		Duration duration = policy.getExpiryForAccess("key", () -> new CachedOembedResponse(null, 120));
-		assertThat(duration).isNull();
-	}
-
-	@Test
-	void expiryPolicyShouldReturnDurationForUpdate() {
-		CachedOembedResponseExpiryPolicy policy = new CachedOembedResponseExpiryPolicy();
-		CachedOembedResponse newValue = new CachedOembedResponse(null, 300);
-
-		Duration duration = policy.getExpiryForUpdate("key", () -> new CachedOembedResponse(null, 120), newValue);
-		assertThat(duration).isEqualTo(Duration.ofSeconds(300));
-	}
-
+record OembedResponseWrapper(OembedResponse value) {
 }

@@ -77,7 +77,7 @@ public class OembedServiceTests {
 	private CacheManager cacheManager;
 
 	@Mock
-	private Cache<String, CachedOembedResponse> cache;
+	private Cache<String, OembedResponseWrapper> cache;
 
 	private final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";
 
@@ -251,9 +251,9 @@ public class OembedServiceTests {
 
 	@Test
 	public void setCacheNameShouldWork() {
-		given(this.cacheManager.getCache("ac.simons.oembed.OembedService", String.class, CachedOembedResponse.class))
+		given(this.cacheManager.getCache("ac.simons.oembed.OembedService", String.class, OembedResponseWrapper.class))
 			.willReturn(null);
-		given(this.cacheManager.getCache("x", String.class, CachedOembedResponse.class)).willReturn(cache);
+		given(this.cacheManager.getCache("x", String.class, OembedResponseWrapper.class)).willReturn(this.cache);
 
 		OembedService oembedService;
 		oembedService = new OembedService(this.defaultHttpClient, null, new ArrayList<>(), null);
@@ -267,8 +267,8 @@ public class OembedServiceTests {
 		oembedService.setCacheName("y");
 		assertThat(oembedService.getCacheName()).isEqualTo("y");
 
-		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
-		verify(this.cacheManager).getCache("x", String.class, CachedOembedResponse.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class);
+		verify(this.cacheManager).getCache("x", String.class, OembedResponseWrapper.class);
 		verify(this.cacheManager).removeCache("x");
 		Mockito.verifyNoMoreInteractions(this.cacheManager);
 	}
@@ -287,9 +287,10 @@ public class OembedServiceTests {
 	@Test
 	public void getOembedResponseForShouldWork2() {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
-		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
-		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+		given(this.cache.get(embeddableUrl)).willReturn(new OembedResponseWrapper(this.response1));
+		given(this.cacheManager.getCache("testCache", String.class, OembedResponseWrapper.class))
+			.willReturn(this.cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class))
 			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager, new ArrayList<>(),
@@ -312,10 +313,10 @@ public class OembedServiceTests {
 		assertThat(response.getVersion()).isEqualTo("1.0");
 		assertThat(oembedService.getCacheName()).isEqualTo("testCache");
 
-		verify(this.cacheManager).getCache("testCache", String.class, CachedOembedResponse.class);
-		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
-		verify(cache).get(embeddableUrl);
-		Mockito.verifyNoMoreInteractions(cache, this.cacheManager);
+		verify(this.cacheManager).getCache("testCache", String.class, OembedResponseWrapper.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class);
+		verify(this.cache).get(embeddableUrl);
+		Mockito.verifyNoMoreInteractions(this.cache, this.cacheManager);
 		Mockito.verifyNoInteractions(this.defaultHttpClient);
 	}
 
@@ -341,9 +342,10 @@ public class OembedServiceTests {
 
 		given(this.defaultHttpClient.execute(any(HttpGet.class))).willReturn(r);
 
-		given(cache.get(embeddableUrl)).willReturn(null);
-		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
-		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+		given(this.cache.get(embeddableUrl)).willReturn(null);
+		given(this.cacheManager.getCache("testCache", String.class, OembedResponseWrapper.class))
+			.willReturn(this.cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class))
 			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager,
@@ -355,12 +357,12 @@ public class OembedServiceTests {
 		assertThat(argumentCaptor.getValue().getURI()).hasToString(
 				"https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360");
 
-		verify(this.cacheManager, times(2)).getCache("testCache", String.class, CachedOembedResponse.class);
-		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
-		verify(cache).get(embeddableUrl);
-		verify(cache).put(any(String.class), any(CachedOembedResponse.class));
+		verify(this.cacheManager, times(2)).getCache("testCache", String.class, OembedResponseWrapper.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class);
+		verify(this.cache).get(embeddableUrl);
+		verify(this.cache).put(any(String.class), any(OembedResponseWrapper.class));
 
-		verifyNoMoreInteractions(cache, this.cacheManager, this.defaultHttpClient);
+		verifyNoMoreInteractions(this.cache, this.cacheManager, this.defaultHttpClient);
 	}
 
 	/**
@@ -385,9 +387,10 @@ public class OembedServiceTests {
 
 		given(this.defaultHttpClient.execute(any(HttpGet.class))).willReturn(r);
 
-		given(cache.get(embeddableUrl)).willReturn(null);
-		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
-		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+		given(this.cache.get(embeddableUrl)).willReturn(null);
+		given(this.cacheManager.getCache("testCache", String.class, OembedResponseWrapper.class))
+			.willReturn(this.cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class))
 			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager,
@@ -399,12 +402,12 @@ public class OembedServiceTests {
 		assertThat(argumentCaptor.getValue().getURI()).hasToString(
 				"https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360");
 
-		verify(this.cacheManager, times(2)).getCache("testCache", String.class, CachedOembedResponse.class);
-		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
-		verify(cache).get(embeddableUrl);
-		verify(cache).put(any(String.class), any(CachedOembedResponse.class));
+		verify(this.cacheManager, times(2)).getCache("testCache", String.class, OembedResponseWrapper.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class);
+		verify(this.cache).get(embeddableUrl);
+		verify(this.cache).put(any(String.class), any(OembedResponseWrapper.class));
 
-		verifyNoMoreInteractions(cache, this.cacheManager, this.defaultHttpClient);
+		verifyNoMoreInteractions(this.cache, this.cacheManager, this.defaultHttpClient);
 	}
 
 	/**
@@ -462,9 +465,10 @@ public class OembedServiceTests {
 	@Test
 	public void embedUrlsShouldWork2() {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
-		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
-		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+		given(this.cache.get(embeddableUrl)).willReturn(new OembedResponseWrapper(this.response1));
+		given(this.cacheManager.getCache("testCache", String.class, OembedResponseWrapper.class))
+			.willReturn(this.cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class))
 			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager, new ArrayList<>(),
@@ -480,9 +484,10 @@ public class OembedServiceTests {
 	@Test
 	public void embedUrlsShouldWork3() {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
-		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
-		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+		given(this.cache.get(embeddableUrl)).willReturn(new OembedResponseWrapper(this.response1));
+		given(this.cacheManager.getCache("testCache", String.class, OembedResponseWrapper.class))
+			.willReturn(this.cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, OembedResponseWrapper.class))
 			.willReturn(null);
 
 		OembedEndpoint oembedEndpoint = new OembedEndpoint();
