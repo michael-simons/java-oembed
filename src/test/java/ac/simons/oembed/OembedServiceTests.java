@@ -76,6 +76,9 @@ public class OembedServiceTests {
 	@Mock
 	private CacheManager cacheManager;
 
+	@Mock
+	private Cache<String, CachedOembedResponse> cache;
+
 	private final String responseString = "{\"author_name\":\"Michael J. Simons\",\"author_url\":\"http://michael-simons.eu\",\"cache_age\":86400,\"html\":\"<iframe width='1024' height='576' src='https://biking.michael-simons.eu/tracks/1/embed?width=1024&height=576' class='bikingTrack'></iframe>\",\"provider_name\":\"biking2\",\"provider_url\":\"https://biking.michael-simons.eu\",\"title\":\"Aachen - Maastricht - Aachen\",\"type\":\"rich\",\"version\":\"1.0\"}";
 
 	private final OembedResponse response1;
@@ -247,12 +250,10 @@ public class OembedServiceTests {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void setCacheNameShouldWork() {
-		Cache<String, CachedOembedResponse> existingCache = Mockito.mock(Cache.class);
 		given(this.cacheManager.getCache("ac.simons.oembed.OembedService", String.class, CachedOembedResponse.class))
 			.willReturn(null);
-		given(this.cacheManager.getCache("x", String.class, CachedOembedResponse.class)).willReturn(existingCache);
+		given(this.cacheManager.getCache("x", String.class, CachedOembedResponse.class)).willReturn(cache);
 
 		OembedService oembedService;
 		oembedService = new OembedService(this.defaultHttpClient, null, new ArrayList<>(), null);
@@ -284,9 +285,7 @@ public class OembedServiceTests {
 	 * Response from cache
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void getOembedResponseForShouldWork2() {
-		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
 		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
@@ -325,7 +324,6 @@ public class OembedServiceTests {
 	 * @throws IOException all of them
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void getOembedResponseForShouldWork3() throws IOException {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 
@@ -343,7 +341,6 @@ public class OembedServiceTests {
 
 		given(this.defaultHttpClient.execute(any(HttpGet.class))).willReturn(r);
 
-		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		given(cache.get(embeddableUrl)).willReturn(null);
 		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
 		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
@@ -371,7 +368,6 @@ public class OembedServiceTests {
 	 * @throws IOException all of them
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void getOembedResponseForShouldWork4() throws IOException {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 
@@ -389,7 +385,6 @@ public class OembedServiceTests {
 
 		given(this.defaultHttpClient.execute(any(HttpGet.class))).willReturn(r);
 
-		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		given(cache.get(embeddableUrl)).willReturn(null);
 		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
 		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
@@ -465,9 +460,7 @@ public class OembedServiceTests {
 	 * configured, also no renders.
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void embedUrlsShouldWork2() {
-		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
 		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
@@ -485,9 +478,7 @@ public class OembedServiceTests {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void embedUrlsShouldWork3() {
-		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
 		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
