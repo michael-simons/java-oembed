@@ -50,14 +50,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import ac.simons.oembed.OembedResponse.Format;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -236,7 +238,8 @@ public class OembedService {
 	 * @param cacheName the new cache name
 	 */
 	public void setCacheName(final String cacheName) {
-		if (this.cacheManager.isPresent() && this.cacheManager.get().cacheExists(this.cacheName)) {
+		if (this.cacheManager.isPresent()
+				&& this.cacheManager.get().getCache(this.cacheName, String.class, CachedOembedResponse.class) != null) {
 			this.cacheManager.get().removeCache(this.cacheName);
 		}
 		this.cacheName = cacheName;
@@ -332,6 +335,24 @@ public class OembedService {
 	}
 
 	/**
+	 * Gets or creates the cache for oembed responses. In Ehcache 3.x, caches need to be
+	 * explicitly created with a configuration.
+	 * @param cm the cache manager
+	 * @return the cache instance
+	 */
+	private Cache<String, CachedOembedResponse> getOrCreateCache(CacheManager cm) {
+		Cache<String, CachedOembedResponse> cache = cm.getCache(this.cacheName, String.class,
+				CachedOembedResponse.class);
+		if (cache == null) {
+			cache = cm.createCache(this.cacheName, CacheConfigurationBuilder
+				.newCacheConfigurationBuilder(String.class, CachedOembedResponse.class, ResourcePoolsBuilder.heap(1000))
+				.withExpiry(new CachedOembedResponseExpiryPolicy())
+				.build());
+		}
+		return cache;
+	}
+
+	/**
 	 * Tries to find an {@link OembedResponse} for the URL {@code url}. If a cache manager
 	 * is present, it tries that first. If an {@code OembedResponse} can be discovered and
 	 * a cache manager is present, that response will be cached.
@@ -345,8 +366,9 @@ public class OembedService {
 			return Optional.empty();
 		}
 
-		var rv = this.cacheManager.map(cm -> cm.addCacheIfAbsent(this.cacheName).get(trimmedUrl))
-			.map(element -> (OembedResponse) element.getObjectValue());
+		var rv = this.cacheManager.map(this::getOrCreateCache)
+			.map(cache -> cache.get(trimmedUrl))
+			.map(CachedOembedResponse::getResponse);
 		// If there's already an oembed response cached, use that
 		if (rv.isPresent()) {
 			LOGGER.debug("Using OembedResponse from cache for '{}'...", trimmedUrl);
@@ -372,13 +394,13 @@ public class OembedService {
 			});
 
 		if (this.cacheManager.isPresent()) {
-			final Ehcache cache = this.cacheManager.get().addCacheIfAbsent(this.cacheName);
+			final Cache<String, CachedOembedResponse> cache = getOrCreateCache(this.cacheManager.get());
 			// Cache at least 60 seconds
 			final int cacheAge = (int) Math.min(
 					Math.max(60L, rv.map(OembedResponse::getCacheAge).orElse(this.defaultCacheAge)), Integer.MAX_VALUE);
 			// We're adding failed urls to the cache as well to prevent them
 			// from being tried again over and over (at least for some seconds)
-			cache.put(new net.sf.ehcache.Element(trimmedUrl, rv.orElse(null), cacheAge, cacheAge));
+			cache.put(trimmedUrl, new CachedOembedResponse(rv.orElse(null), cacheAge));
 			LOGGER.debug("Cached {} for {} seconds for url '{}'...", rv, cacheAge, trimmedUrl);
 		}
 

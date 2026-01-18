@@ -42,12 +42,11 @@ import java.util.List;
 import java.util.Optional;
 
 import ac.simons.oembed.OembedResponse.Format;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -248,9 +247,12 @@ public class OembedServiceTests {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void setCacheNameShouldWork() {
-		given(this.cacheManager.cacheExists("ac.simons.oembed.OembedService")).willReturn(false);
-		given(this.cacheManager.cacheExists("x")).willReturn(true);
+		Cache<String, CachedOembedResponse> existingCache = Mockito.mock(Cache.class);
+		given(this.cacheManager.getCache("ac.simons.oembed.OembedService", String.class, CachedOembedResponse.class))
+			.willReturn(null);
+		given(this.cacheManager.getCache("x", String.class, CachedOembedResponse.class)).willReturn(existingCache);
 
 		OembedService oembedService;
 		oembedService = new OembedService(this.defaultHttpClient, null, new ArrayList<>(), null);
@@ -264,8 +266,8 @@ public class OembedServiceTests {
 		oembedService.setCacheName("y");
 		assertThat(oembedService.getCacheName()).isEqualTo("y");
 
-		verify(this.cacheManager).cacheExists(OembedService.class.getName());
-		verify(this.cacheManager).cacheExists("x");
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
+		verify(this.cacheManager).getCache("x", String.class, CachedOembedResponse.class);
 		verify(this.cacheManager).removeCache("x");
 		Mockito.verifyNoMoreInteractions(this.cacheManager);
 	}
@@ -282,11 +284,14 @@ public class OembedServiceTests {
 	 * Response from cache
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void getOembedResponseForShouldWork2() {
-		Ehcache cache = Mockito.mock(Ehcache.class);
+		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-		given(cache.get(embeddableUrl)).willReturn(new Element(embeddableUrl, this.response1));
-		given(this.cacheManager.addCacheIfAbsent("testCache")).willReturn(cache);
+		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
+		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager, new ArrayList<>(),
 				null);
@@ -308,8 +313,8 @@ public class OembedServiceTests {
 		assertThat(response.getVersion()).isEqualTo("1.0");
 		assertThat(oembedService.getCacheName()).isEqualTo("testCache");
 
-		verify(this.cacheManager).addCacheIfAbsent("testCache");
-		verify(this.cacheManager).cacheExists(OembedService.class.getName());
+		verify(this.cacheManager).getCache("testCache", String.class, CachedOembedResponse.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
 		verify(cache).get(embeddableUrl);
 		Mockito.verifyNoMoreInteractions(cache, this.cacheManager);
 		Mockito.verifyNoInteractions(this.defaultHttpClient);
@@ -320,6 +325,7 @@ public class OembedServiceTests {
 	 * @throws IOException all of them
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void getOembedResponseForShouldWork3() throws IOException {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 
@@ -337,9 +343,11 @@ public class OembedServiceTests {
 
 		given(this.defaultHttpClient.execute(any(HttpGet.class))).willReturn(r);
 
-		Ehcache cache = Mockito.mock(Ehcache.class);
+		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		given(cache.get(embeddableUrl)).willReturn(null);
-		given(this.cacheManager.addCacheIfAbsent("testCache")).willReturn(cache);
+		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager,
 				List.of(oembedEndpoint), null);
@@ -350,10 +358,10 @@ public class OembedServiceTests {
 		assertThat(argumentCaptor.getValue().getURI()).hasToString(
 				"https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360");
 
-		verify(this.cacheManager, times(2)).addCacheIfAbsent("testCache");
-		verify(this.cacheManager).cacheExists(OembedService.class.getName());
+		verify(this.cacheManager, times(2)).getCache("testCache", String.class, CachedOembedResponse.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
 		verify(cache).get(embeddableUrl);
-		verify(cache).put(any(Element.class));
+		verify(cache).put(any(String.class), any(CachedOembedResponse.class));
 
 		verifyNoMoreInteractions(cache, this.cacheManager, this.defaultHttpClient);
 	}
@@ -363,6 +371,7 @@ public class OembedServiceTests {
 	 * @throws IOException all of them
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void getOembedResponseForShouldWork4() throws IOException {
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
 
@@ -380,9 +389,11 @@ public class OembedServiceTests {
 
 		given(this.defaultHttpClient.execute(any(HttpGet.class))).willReturn(r);
 
-		Ehcache cache = Mockito.mock(Ehcache.class);
+		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		given(cache.get(embeddableUrl)).willReturn(null);
-		given(this.cacheManager.addCacheIfAbsent("testCache")).willReturn(cache);
+		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager,
 				List.of(oembedEndpoint), null);
@@ -393,10 +404,10 @@ public class OembedServiceTests {
 		assertThat(argumentCaptor.getValue().getURI()).hasToString(
 				"https://biking.michael-simons.eu/oembed?format=json&url=https%3A%2F%2Fbiking.michael-simons.eu%2Ftracks%2F1&maxwidth=480&maxheight=360");
 
-		verify(this.cacheManager, times(2)).addCacheIfAbsent("testCache");
-		verify(this.cacheManager).cacheExists(OembedService.class.getName());
+		verify(this.cacheManager, times(2)).getCache("testCache", String.class, CachedOembedResponse.class);
+		verify(this.cacheManager).getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class);
 		verify(cache).get(embeddableUrl);
-		verify(cache).put(any(Element.class));
+		verify(cache).put(any(String.class), any(CachedOembedResponse.class));
 
 		verifyNoMoreInteractions(cache, this.cacheManager, this.defaultHttpClient);
 	}
@@ -454,11 +465,14 @@ public class OembedServiceTests {
 	 * configured, also no renders.
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void embedUrlsShouldWork2() {
-		Ehcache cache = Mockito.mock(Ehcache.class);
+		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-		given(cache.get(embeddableUrl)).willReturn(new Element(embeddableUrl, this.response1));
-		given(this.cacheManager.addCacheIfAbsent("testCache")).willReturn(cache);
+		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
+		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+			.willReturn(null);
 
 		OembedService oembedService = new OembedService(this.defaultHttpClient, this.cacheManager, new ArrayList<>(),
 				null);
@@ -471,11 +485,14 @@ public class OembedServiceTests {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void embedUrlsShouldWork3() {
-		Ehcache cache = Mockito.mock(Ehcache.class);
+		Cache<String, CachedOembedResponse> cache = Mockito.mock(Cache.class);
 		String embeddableUrl = "https://biking.michael-simons.eu/tracks/1";
-		given(cache.get(embeddableUrl)).willReturn(new Element(embeddableUrl, this.response1));
-		given(this.cacheManager.addCacheIfAbsent("testCache")).willReturn(cache);
+		given(cache.get(embeddableUrl)).willReturn(new CachedOembedResponse(this.response1, 86400));
+		given(this.cacheManager.getCache("testCache", String.class, CachedOembedResponse.class)).willReturn(cache);
+		given(this.cacheManager.getCache(OembedService.class.getName(), String.class, CachedOembedResponse.class))
+			.willReturn(null);
 
 		OembedEndpoint oembedEndpoint = new OembedEndpoint();
 		oembedEndpoint.setName("biking");
