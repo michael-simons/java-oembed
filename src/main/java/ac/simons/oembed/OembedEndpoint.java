@@ -56,6 +56,8 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class OembedEndpoint {
 
+	private static final Pattern FORMAT_PLACE_HOLDER_PATTERN = Pattern.compile("(?i)%?\\{format}");
+
 	/**
 	 * The name of this provider.
 	 */
@@ -272,8 +274,9 @@ public class OembedEndpoint {
 		String uri;
 		final List<NameValuePair> query = new ArrayList<>();
 
-		if (this.getEndpoint().toLowerCase().contains("%{format}")) {
-			uri = this.getEndpoint().replaceAll(Pattern.quote("%{format}"), this.getFormat().toString());
+		var matcher = FORMAT_PLACE_HOLDER_PATTERN.matcher(this.getEndpoint());
+		if (matcher.find()) {
+			uri = matcher.replaceAll(this.getFormat().toString());
 		}
 		else {
 			uri = this.getEndpoint();

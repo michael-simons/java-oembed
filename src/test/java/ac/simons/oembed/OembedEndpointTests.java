@@ -107,6 +107,19 @@ public class OembedEndpointTests {
 				"https://api.twitter.com/1.1/statuses/oembed.json?url=https%3A%2F%2Ftwitter.com%2Frotnroll666%2Fstatus%2F549898095853838336");
 	}
 
+	@Test // GH-16
+	public void vimeoWithoutPercentage() {
+		OembedEndpoint oembedEndpoint = new OembedEndpoint();
+
+		oembedEndpoint.setEndpoint("https://vimeo.com/api/oembed.{format}");
+		oembedEndpoint.setFormat(Format.json);
+		oembedEndpoint.setMaxWidth(null);
+		oembedEndpoint.setMaxHeight(null);
+
+		assertThat(oembedEndpoint.toApiUrl("http://vimeo.com/channels/everythinganimated/111627831")).hasToString(
+				"https://vimeo.com/api/oembed.json?url=http%3A%2F%2Fvimeo.com%2Fchannels%2Feverythinganimated%2F111627831");
+	}
+
 	@Test
 	public void toApiUrlShouldWork2() {
 
