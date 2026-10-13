@@ -78,7 +78,7 @@
 		<jackson.version>2.20.1</jackson.version>
 		<jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
 		<jaxb-impl.version>3.0.2</jaxb-impl.version>
-		<jsoup.version>1.22.1</jsoup.version>
+		<jsoup.version>1.23.2</jsoup.version>
 		<junit.version>6.0.1</junit.version>
 		<license-maven-plugin.version>5.0.0</license-maven-plugin.version>
 		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
